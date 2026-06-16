@@ -1,9 +1,0 @@
-{
-  "name": "minecraft-afk-bot",
-  "version": "1.0.0",
-  "main": "index.js",
-  "dependencies": {
-    "mineflayer": "^4.20.1",
-    "mineflayer-auto-auth": "^2.0.0"
-  }
-}
