@@ -1,267 +1,267 @@
-# 🛡️ HavenCraft — Master Codebase Audit Report (Full-Stack, Security & QA)
+# 🛡️ হেভেনক্রাফট (HavenCraft) — পূর্ণাঙ্গ ওয়েবসাইট অডিট রিপোর্ট (সিকিউরিটি, পারফরম্যান্স ও কিউএ)
 
-> **Audit Date:** September 14, 2026  
-> **Auditor Role:** Elite Full-Stack Web Developer, Security Architect & Senior QA Auditor  
-> **Target System:** HavenCraft SMP Website (`HavenCraft-main`)  
-> **Target Quality Standard:** 99.99% Flawless, Production-Grade Reliability  
-
----
-
-## 📑 Table of Contents
-1. [Executive Summary & Threat Matrix](#executive-summary--threat-matrix)
-2. [Module 1: Backend & Serverless API Routes](#module-1-backend--serverless-api-routes)
-3. [Module 2: Voting System & Supabase Integration](#module-2-voting-system--supabase-integration)
-4. [Module 3: Core Infrastructure, Utilities & Service Worker](#module-3-core-infrastructure-utilities--service-worker)
-5. [Module 4: Dynamic Features & Interactive Modules](#module-4-dynamic-features--interactive-modules)
-6. [Module 5: HTML Architecture, SEO & Accessibility (a11y)](#module-5-html-architecture-seo--accessibility-a11y)
-7. [Module 6: CSS Architecture, Design System & Responsiveness](#module-6-css-architecture-design-system--responsiveness)
-8. [Module 7: Build Automation, DevOps & Tooling](#module-7-build-automation-devops--tooling)
-9. [Priority Remediation Matrix (P0 to P3)](#priority-remediation-matrix)
+> **অডিটের তারিখ:** ১৪ সেপ্টেম্বর, ২০২৬  
+> **অডিটকারী:** এলিট ফুল-স্ট্যাক ওয়েব ডেভেলপার, সিকিউরিটি এক্সপার্ট ও সিনিয়র কিউএ অডিটর  
+> **টার্গেট প্রজেক্ট:** HavenCraft SMP Website (`HavenCraft-main`)  
+> **টার্গেট কোয়ালিটি মানদণ্ড:** ৯৯.৯৯% নিখুঁত এবং প্রোডাকশন-গ্রেড স্ট্যাবিলিটি  
 
 ---
 
-## Executive Summary & Threat Matrix
+## 📑 সূচিপত্র (Table of Contents)
+1. [সারসংক্ষেপ এবং প্রধান ঝুঁকির তালিকা (Executive Summary)](#সারসংক্ষেপ-এবং-প্রধান-ঝুঁকির-তালিকা)
+2. [মডিউল ১: ব্যাকএন্ড এবং সার্ভারলেস এপিআই (Backend & Serverless APIs)](#মডিউল-১-ব্যাকএন্ড-এবং-সার্ভারলেস-এপিআই)
+3. [মডিউল ২: ভোট সিস্টেম ও সুপাবেস ডাটাবেস (Voting System & Supabase)](#মডিউল-২-ভোট-সিস্টেম-ও-সুপাবেস-ডাটাবেস)
+4. [মডিউল ৩: কোর স্ক্রিপ্ট, ইউটিলিটি ও সার্ভিস ওয়ার্কার (Core & Service Worker)](#মডিউল-৩-কোর-স্ক্রিপ্ট-ইউটিলিটি-ও-সার্ভিস-ওয়ার্কার)
+5. [মডিউল ৪: ডায়নামিক ফিচারসমূহ (Profile, Leaderboard, Gallery, Store, Staff)](#মডিউল-৪-ডায়নামিক-ফিচারসমূহ)
+6. [মডিউল ৫: এইচটিএমএল পেজ, এসইও ও অ্যাক্সেসিবিলিটি (HTML, SEO & a11y)](#মডিউল-৫-এইচটিএমএল-পেজ-এসইও-ও-অ্যাক্সেসিবিলিটি)
+7. [মডিউল ৬: সিএসএস ও রেসপন্সিভ ডিজাইন (CSS & Mobile Layout)](#মডিউল-৬-সিএসএস-ও-রেসপন্সিভ-ডিজাইন)
+8. [মডিউল ৭: বিল্ড স্ক্রিপ্ট ও অটোমেশন (Build.js & Tooling)](#মডিউল-৭-বিল্ড-স্ক্রিপ্ট-ও-অটোমেশন)
+9. [ধাপে ধাপে সমাধান করার রোডম্যাপ (Priority Fix Matrix)](#ধাপে-ধাপে-সমাধান-করার-রোডম্যাপ)
 
-HavenCraft-main represents a rich, feature-packed static website with serverless API extensions, multi-database Supabase integration, and real-time gaming utilities. However, a forensic, line-by-line inspection of all 35+ files revealed **multiple Critical (P0) security vulnerabilities, severe performance bottlenecks, data leakage risks, and cross-platform logic bugs**:
+---
 
-| Category | Severity | Summary of Key Discoveries |
+## সারসংক্ষেপ এবং প্রধান ঝুঁকির তালিকা
+
+HavenCraft-main ওয়েবসাইটে চমৎকার অ্যানিমেশন, আধুনিক ডিজাইন এবং দারুণ সব ফিচার রয়েছে। কিন্তু কোডের প্রতিটি লাইন গভীরভাবে পর্যবেক্ষণ করার পর বেশ কিছু **ভয়াবহ সিকিউরিটি ঝুঁকি (P0), ডাটাবেস মুছে যাওয়ার ঝুঁকি, ব্রাউজার ক্র্যাশ এবং বেডরক প্লেয়ারদের গেম ডাটা লোড না হওয়ার মতো বড় সমস্যা** পাওয়া গেছে:
+
+| ক্যাটাগরি | গুরুত্ব (Severity) | সমস্যার সারসংক্ষেপ |
 | :--- | :---: | :--- |
-| **P0 Security** | **CRITICAL** | Hardcoded Supabase `service_role` master secret key in repo script (`migrate-webp.js`) bypassing all RLS policies. |
-| **P0 Security** | **CRITICAL** | Unauthenticated file upload into Supabase storage bucket (`upload.js`) *before* staff passcode verification. |
-| **P0 Security** | **HIGH** | DOM/Stored XSS in Discord Widget renderer (`discord/index.html`) through unsanitized username & game status injection. |
-| **P0 Reliability** | **CRITICAL** | Service Worker permanently caches 404/500 errors (`sw.js`), plus Linux case-sensitivity 404 (`/vote/UI.js`). |
-| **P1 Logic Bug** | **HIGH** | Hardcoded `maxlength="16"` across forms & login restricting Bedrock players (`.username` up to 24 chars). |
-| **P1 Performance** | **HIGH** | Massive client-side memory dump: downloading 5,000 raw vote rows on client for simple count aggregation. |
-| **P1 Performance** | **HIGH** | Sequential N+1 async waterfall loops (e.g. 8 sequential `await` queries in `full-leaderboard.js`, 7 in `profile.js`). |
-| **P2 Architecture** | **MEDIUM** | `build.js` generates a bundle (`dist/bundle.min.js`) using a regex minifier that no HTML page ever consumes. |
+| **P0 সিকিউরিটি** | **চরম বিপজ্জনক (CRITICAL)** | `migrate-webp.js` ফাইলে সুপাবেসের মাস্টার সিক্রেট কি (`service_role`) সরাসরি লেখা রয়েছে, যা দিয়ে যে কেউ পুরো ডাটাবেস মুছে ফেলতে পারে। |
+| **P0 সিকিউরিটি** | **চরম বিপজ্জনক (CRITICAL)** | `upload.js`-এ পাসকোড চেক করার আগেই ক্লায়েন্টের ব্রাউজার থেকে ছবি সরাসরি ক্লাউড স্টোরেজে আপলোড হয়ে যাচ্ছে। ফলে যে কেউ পাসকোড ছাড়াই স্টোরেজ ফুল করে দিতে পারবে। |
+| **P0 সিকিউরিটি** | **উচ্চ (HIGH)** | ডিসকর্ড পেজে (`discord/index.html`) মেম্বারদের নাম ও স্ট্যাটাস সরাসরি `innerHTML`-এ দেওয়ায় XSS হ্যাকিংয়ের ঝুঁকি রয়েছে। |
+| **P0 স্ট্যাবিলিটি** | **চরম বিপজ্জনক (CRITICAL)** | সার্ভিস ওয়ার্কার (`sw.js`) সার্ভারের সাময়িক 404 বা 500 এরর পেজকে চিরতরে ক্যাশ করে ফেলে, ফলে একবার এরর আসলে ইউজারের সাইট আজীবনের জন্য আটকে যায়। তাছাড়া লিনাক্স সার্ভারে বড় হাতের অক্ষরের কারণে `/vote/UI.js` 404 হবে। |
+| **P1 লজিক বাগ** | **উচ্চ (HIGH)** | সব ইনপুট ফিল্ড ও লগইনে `maxlength="16"` দেওয়া। ফলে বেডরক প্লেয়াররা (যাদের নামের শুরুতে ডট `.` থাকে এবং নাম ২৪ অক্ষর পর্যন্ত হয়) লগইন বা ভোট স্ট্যাটাস চেক করতে পারছেন না। |
+| **P1 পারফরম্যান্স** | **উচ্চ (HIGH)** | ব্রাউজারে ভোট সংখ্যা গুনতে গিয়ে ৫০০০টি ডাটাবেস রো একসাথে ডাউনলোড করা হচ্ছে। এতে মোবাইল ফোনে প্রচুর ইন্টারনেট নষ্ট হয় এবং ফোন ল্যাগ করে। |
+| **P1 পারফরম্যান্স** | **উচ্চ (HIGH)** | লিডারবোর্ড ও প্রোফাইল পেজে একের পর এক সিরিয়ালে ৮টি কুয়েরি চালানো হচ্ছে (`for` লুপের ভেতর `await`), যার কারণে পেজ লোড হতে অনেক দেরি হয়। |
+| **P2 আর্কিটেকচার** | **মাঝারি (MEDIUM)** | `build.js` দিয়ে যে বান্ডেল ফাইল বানানো হয়, তা কোনো এইচটিএমএল পেজেই ব্যবহার করা হচ্ছে না। |
 
 ---
 
-## Module 1: Backend & Serverless API Routes
-
-### 1. `scripts/migrate-webp.js`
-#### 🔴 Security & Critical Bugs:
-- **P0 Secret Leakage (Exposed Service Role JWT):** Line 23 contains a live, hardcoded Supabase `service_role` JWT token (`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`). The `service_role` secret completely bypasses Row Level Security (RLS). Anyone with access to the source code or git history can read, write, drop tables, or delete files in the `rbrrkphtobxcmnzshnqj` project.
-- **Remote File Fetch Denial of Service:** Line 64 calls `fetch(record.image_url)` without timeout (`AbortController`) or content-length checks. If a malicious or hanging URL is stored in the DB, the migration process hangs indefinitely.
-
-#### ⚠️ Performance & Speed Issues:
-- **Sequential In-Memory Processing:** Images are downloaded, converted via `sharp` buffer, and uploaded sequentially inside a `for...of` loop (lines 60–120). For hundreds of images, this takes minutes. Concurrency limiting (e.g., `p-limit` with 4 parallel workers) would speed this up by 400%.
-- **Memory Pressure with Large Buffers:** `Buffer.from(arrayBuffer)` loads entire uncompressed images into Node.js RAM. Multiple high-res screenshots can trigger heap memory exhaustion.
-
-#### 🎨 UI/UX, SEO & Responsiveness:
-- N/A (CLI automation script).
-
-#### 🟠 Logic Flaws & Improvements:
-- **URL Parsing Fragility:** Line 81 uses `record.image_url.split('/')` to extract filename. If the URL contains query parameters or hash fragments (e.g. `?token=xyz`), the generated filename includes those characters, corrupting storage keys. Use `new URL(record.image_url).pathname`.
-
-#### 🚀 Modernization & UX Suggestions:
-- Delete the hardcoded secret immediately. Force loading strictly from `process.env.GALLERY_SUPABASE_SERVICE_KEY` and rotate the exposed Supabase service secret key immediately from the Supabase dashboard.
+## মডিউল ১: ব্যাকএন্ড এবং সার্ভারলেস এপিআই
 
 ---
 
-### 2. `api/contact.js`
+### ১. `scripts/migrate-webp.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Unhandled Body Destructuring Crash (500 Error):** Line 7 (`const { name, email, subject, message } = req.body;`) is executed **outside** the `try...catch` block. If a request arrives with an empty body, `Content-Type: text/plain`, or malformed JSON, `req.body` is `undefined`, causing `TypeError: Cannot destructure property 'name' of 'req.body' as it is undefined`, crashing the serverless function.
-- **Spam Bombing & Quota Exhaustion (No Rate Limiting / Captcha):** There is no IP-based rate limiting, Cloudflare Turnstile, or CAPTCHA verification. Any bot can script a loop to send 10,000 requests, consuming the Web3Forms quota, spamming the server owner's email inbox, and exhausting Vercel invocation quotas.
-- **Missing Payload Size & Type Sanitization:** `name`, `email`, and `message` are not length-capped. An attacker can send a 5MB text payload in `message`, consuming memory and network egress.
+- **মাস্টার সিক্রেট কি ফাঁস (Exposed Service Role Secret):** ২৩ নম্বর লাইনে সুপাবেসের `service_role` মাস্টার সিক্রেট টোকেন সরাসরি হার্ডকোড করা আছে (`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`)। এই টোকেনটি দিয়ে সুপাবেসের সমস্ত Row Level Security (RLS) বাইপাস করা যায়। কোনো হ্যাকার বা বহিরাগত ব্যক্তি যদি গিটহাবে বা কোডে এই কি পেয়ে যায়, তবে সে এক সেকেন্ডেই আপনার সম্পূর্ণ ডাটাবেসের সমস্ত টেবিল ও ডাটা ডিলিট করে দিতে পারবে!
+- **সার্ভার হ্যাং হওয়ার ঝুঁকি (DoS):** ৬৪ নম্বর লাইনে `fetch(record.image_url)` ব্যবহার করা হয়েছে, কিন্তু সেখানে কোনো টাইমআউট (`AbortController`) বা ফাইলের সাইজ লিমিট নেই। কোনো নষ্ট লিংকের কারণে স্ক্রিপ্ট চিরতরে আটকে থাকবে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Unnecessary Overhead via `FormData`:** `api/contact.js` creates a `FormData` object and posts multipart form data to Web3Forms (lines 21–31). Web3Forms supports direct `application/json` POST, which is faster and consumes less memory in Node.js serverless runtimes.
+- **সিরিয়াল ইমেজ প্রসেসিং:** ইমেজগুলো একের পর এক সিরিয়ালে প্রসেস করা হচ্ছে। ১০০টি ছবি থাকলে রূপান্তর করতে অনেক মিনিট সময় লেগে যাবে। প্যারালাল প্রসেসিং (যেমন `p-limit`) ব্যবহার করলে ৪ গুণ দ্রুত কাজ হবে।
+- **র‍্যামের ওপর চাপ:** পুরো ছবির ডাটা বাফারে (`Buffer.from`) লোড করার ফলে বড় ফাইলের ক্ষেত্রে মেমরি ক্র্যাশ (Heap out of memory) হতে পারে।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- N/A (Backend API Endpoint).
+- প্রযোজ্য নয় (এটি কমান্ড লাইন স্ক্রিপ্ট)।
 
 #### 🟠 Logic Flaws & Improvements:
-- **Lack of Email Format Validation:** Does not validate if `email` is a valid RFC 5322 email string before dispatching to Web3Forms.
-- **Generic Error Responses:** Always returns `Failed to send message` without distinguishing between bad client input (400) and third-party Web3Forms gateway failures (502).
+- **ফাইলের নামের সমস্যা:** ৮১ নম্বর লাইনে `split('/')` দিয়ে ফাইলের নাম নেওয়া হচ্ছে। ইউআরএল-এ যদি কুয়েরি প্যারামিটার (যেমন `?v=1`) থাকে, তাহলে ফাইলের নাম নষ্ট হয়ে যাবে। `new URL(record.image_url).pathname` ব্যবহার করা উচিত।
 
 #### 🚀 Modernization & UX Suggestions:
-- Wrap `req.body` destructuring safely:
+- **অবিলম্বে অ্যাকশন নিন:** ফাইল থেকে হার্ডকোডেড কি মুছে ফেলুন এবং সুপাবেস ড্যাশবোর্ড থেকে এই `service_role` কি অবিলম্বে **Rotate/Reset** করুন। কি সবসময় `.env` ফাইল থেকে লোড করতে হবে।
+
+---
+
+### ২. `api/contact.js`
+
+#### 🔴 Security & Critical Bugs:
+- **সার্ভার ক্র্যাশ বাগ (Unhandled Destructuring):** ৭ নম্বর লাইনটি (`const { name, email, subject, message } = req.body;`) `try...catch`-এর **বাইরে** লেখা হয়েছে। যদি কোনো রিকোয়েস্টে বডি ফাঁকা থাকে বা ভুল ফরম্যাটের ডাটা আসে, তাহলে `req.body` হবে `undefined`। ফলে সার্ভার সাথে সাথে ক্র্যাশ করে ৫০০ ইন্টারনাল সার্ভার এরর দিবে।
+- **স্প্যামিং ও কোটা শেষ হওয়ার ঝুঁকি (No Rate Limiting / Captcha):** এখানে কোনো রেট লিমিটিং বা ক্যাপচা নেই। যে কেউ স্ক্রিপ্ট চালিয়ে প্রতি সেকেন্ডে শত শত রিকোয়েস্ট পাঠাতে পারবে। এতে আপনার Web3Forms-এর ফ্রি কোটা শেষ হয়ে যাবে এবং মালিকের জিমেইলে হাজার হাজার স্প্যাম মেইল জমা হবে।
+- **বড় সাইজের ডাটা আক্রমণ:** মেসেজের দৈর্ঘ্যের কোনো লিমিট নেই। হ্যাকার চাইলে একবারে ১০ মেগাবাইট টেক্সট পাঠিয়ে সার্ভারলেস ফাংশনের মেমরি জ্যাম করে দিতে পারে।
+
+#### ⚠️ Performance & Speed Issues:
+- ২১–৩১ নম্বর লাইনে `FormData` তৈরি করে Web3Forms-এ পাঠানো হচ্ছে। নোড জেএস ব্যাকএন্ডে সরাসরি JSON পাঠানো অনেক বেশি হালকা ও দ্রুত।
+
+#### 🎨 UI/UX, SEO & Responsiveness:
+- প্রযোজ্য নয় (ব্যাকএন্ড এপিআই)।
+
+#### 🟠 Logic Flaws & Improvements:
+- ইমেইলের ফরম্যাট সঠিক কিনা (যেমন `@` এবং ডোমেন আছে কিনা) তা ভ্যালিডেট করা হয়নি। ভুলভাল টেক্সট দিলেও সাবমিট হয়ে যাবে।
+
+#### 🚀 Modernization & UX Suggestions:
+- ডাটা নেওয়ার সময় সেফগার্ড যোগ করুন:
   ```javascript
   const body = req.body || {};
-  const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : '';
-  const email = typeof body.email === 'string' ? body.email.trim().slice(0, 120) : '';
-  const message = typeof body.message === 'string' ? body.message.trim().slice(0, 3000) : '';
+  const name = String(body.name || '').trim().slice(0, 100);
+  const email = String(body.email || '').trim().slice(0, 120);
+  const message = String(body.message || '').trim().slice(0, 3000);
   ```
-- Implement Cloudflare Turnstile or a signed honeypot field (`botcheck`).
+- Cloudflare Turnstile অথবা Honeypot প্রোটেকশন যোগ করুন।
 
 ---
 
-### 3. `api/status.js`
+### ৩. `api/status.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Serverless Timeout Risk (Sequential Fallback Latency):** Lines 11–38 iterate sequentially through 4 external endpoints (`mcstatus.io` Bedrock, `mcsrvstat.us` Bedrock, `mcstatus.io` Java, `mcsrvstat.us` Java), each with a 3.5s timeout. In the worst case where the first 2 endpoints fail, the function waits $3.5 + 3.5 = 7.0$ seconds before attempting Java. On Vercel free tier (10s default execution limit), this easily triggers a 504 Gateway Timeout!
-- **Data Type Corruption on MOTD:** Line 29:
-  ```javascript
-  motd: data.motd?.clean || (Array.isArray(data.motd?.raw) ? data.motd.raw.join(' ') : (data.motd?.raw || ''))
-  ```
-  `mcsrvstat.us` returns `data.motd.clean` as an **Array of strings** (e.g. `["HavenCraft SMP", "Season 5"]`), whereas `mcstatus.io` returns `data.motd.clean` as a **single string**. Because `Array.isArray(data.motd?.clean)` is not checked, when `mcsrvstat.us` is used, `normalized.motd` becomes a JavaScript Array instead of a string, breaking frontend string methods (`.slice()`, `.replace()`)!
+- **১০ সেকেন্ড টাইমআউট হয়ে সার্ভারলেস ফেইল হওয়া:** ১১–৩৮ নম্বর লাইনে ৪টি সার্ভার স্ট্যাটাস প্রোভাইডারের কাছে একের পর এক সিরিয়ালে ৩.৫ সেকেন্ড করে রিকোয়েস্ট পাঠানো হয়। যদি প্রথম দুটি প্রোভাইডার স্লো থাকে বা ডাউন থাকে, তাহলে $৩.৫ + ৩.৫ = ৭$ সেকেন্ড নষ্ট হবে। ভার্সেল ফ্রি টিয়ারে ১০ সেকেন্ড লিমিট থাকায় পুরো এপিআই টাইমআউট (504 Gateway Timeout) হয়ে যাবে!
+- **MOTD ডাটা টাইপ ভেঙে যাওয়া:** ২৯ নম্বর লাইনে:
+  `motd: data.motd?.clean || ...`
+  `mcsrvstat.us` প্রোভাইডার `clean` ফিল্ডে একটি **Array (অ্যারে)** পাঠায় (যেমন `["HavenCraft", "Join Now"]`), কিন্তু `mcstatus.io` পাঠায় **String (স্ট্রিং)**। অ্যারে পাঠালে ফ্রন্টএন্ডে জাভাস্ক্রিপ্ট স্ট্রিং ফাংশনগুলো ক্র্যাশ করবে!
 
 #### ⚠️ Performance & Speed Issues:
-- **Edge Cache Optimization:** While `s-maxage=15, stale-while-revalidate=45` is set, `Cache-Control` does not specify `public`, which is recommended for Vercel Edge caching to prevent unnecessary origin invocations.
-- **Parallel Race Strategy:** Instead of sequential looping with a 3.5s wait per provider, query primary endpoints concurrently using `Promise.any()` or a racing mechanism with a fast 2.5s global abort timeout.
+- সিরিয়ালি একটির পর একটি ট্রাই না করে `Promise.any()` দিয়ে সবগুলো প্রোভাইডারকে একসাথে কল করা উচিত, যেটি সবার আগে সঠিক রেসপন্স দেবে সেটিই ইউজারকে দেখানো উচিত।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- N/A (Backend API Endpoint).
+- প্রযোজ্য নয়।
 
 #### 🟠 Logic Flaws & Improvements:
-- **Bedrock vs Java Server Priority:** Lines 5–8 query Bedrock ports (`2566`) first. However, HavenCraft is a hybrid Java/Bedrock server running Geyser/Floodgate on top of Paper/Purpur. Java status query to `mc.havencraft.pro` returns full MOTD, player lists, and accurate version numbers. If Bedrock query fails or drops player list names due to UDP query restrictions, the API falls back to Bedrock provider 2 before even attempting Java!
+- হেভেনক্রাফট মূলত পেপার/পারপার ভিত্তিক জাভা সার্ভার এবং গিজার প্লাগইনের মাধ্যমে বেডরক কানেক্ট হয়। কিন্তু কোডে প্রথমে বেডরক পোর্ট কুয়েরি করা হচ্ছে। জাভা কুয়েরি আগে করলে প্লেয়ারদের সঠিক নাম ও নিখুঁত ভার্সন ইনফো পাওয়া যায়।
 
 #### 🚀 Modernization & UX Suggestions:
-- Standardize MOTD parsing:
+- MOTD হ্যান্ডলিং ফিক্স করুন:
   ```javascript
   const cleanMotd = Array.isArray(data.motd?.clean)
       ? data.motd.clean.join(' ')
       : (typeof data.motd?.clean === 'string' ? data.motd.clean : '');
   ```
-- Implement `Promise.any` or priority-parallel race with `AbortController`.
 
 ---
 
-### 4. `api/submit-gallery.js`
+### ৪. `api/submit-gallery.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Staff Passcode Brute-Force Vulnerability (No Rate Limiting):** Lines 16–23 check `staffPasscodes[passcode]` in memory with no attempt throttling, IP rate limiting, or account lockout. An attacker can write a script sending 50 requests/second to brute force staff passcodes.
-- **Missing URL Sanitization / SSRF / Stored XSS:** `imageUrl` is taken directly from `req.body` and saved into Supabase (lines 43–47). There is NO validation that `imageUrl` is actually from the Supabase storage bucket (`https://rbrrkphtobxcmnzshnqj.supabase.co/storage/v1/object/public/gallery/...`). A staff member or compromised passcode can submit `javascript:...`, data URIs, or external phishing URLs, which are then rendered across all users' browsers in `gallery/index.html`.
-- **Unhandled Body Destructuring Crash:** Like `contact.js`, line 7 is outside `try...catch`, leading to unhandled 500 exceptions if `req.body` is missing.
+- **স্টাফ পাসকোড ব্রুট-ফোর্স ঝুঁকি (Brute-Force Attack):** ১৬–২৩ নম্বর লাইনে স্টাফ পাসকোড চেক করা হয়, কিন্তু ভুল পাসকোড দিলে কোনো ডிலே বা রেট লিমিট নেই। একজন হ্যাকার অনায়াসেই স্ক্রিপ্ট চালিয়ে সেকেন্ডে ৫০ বার ট্রাই করে সঠিক পাসকোড বের করে ফেলতে পারবে।
+- **ক্ষতিকর ইমেজ ইউআরএল বা XSS ইনজেকশন:** ক্লায়েন্ট থেকে আসা `imageUrl` সরাসরি ডাটাবেসে সেভ করা হয় (লাইন ৪৩–৪৭)। ছবিটি আসলেও আপনার সুপাবেস স্টোরেজের কিনা তা চেক করা হয় না। হ্যাকার চাইলে `javascript:...` অথবা ফিশিং লিংক সেভ করে দিতে পারে, যা গ্যালারি পেজে সব ইউজারের সামনে লোড হবে।
+- বডি পার্সিং ক্র্যাশ: ৭ নম্বর লাইনটি `try...catch`-এর বাইরে থাকায় ইনপুট না থাকলে সার্ভার ৫০০ এরর দিয়ে ক্র্যাশ করবে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Redundant `JSON.parse` on Every Request:** Line 17 runs `JSON.parse(process.env.STAFF_PASSCODES_JSON || '{}')` on every single incoming HTTP request. This should be parsed once at module evaluation scope outside the handler function.
+- প্রতিবার রিকোয়েস্ট আসার পর ১৭ নম্বর লাইনে `JSON.parse` দিয়ে পরিবেশ ভেরিয়েবল পার্স করা হচ্ছে। এটি ফাংশন হ্যান্ডলারের বাইরে একবার পার্স করে রাখলে সার্ভারের পারফরম্যান্স ভালো থাকবে।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- N/A (Backend API Endpoint).
+- প্রযোজ্য নয়।
 
 #### 🟠 Logic Flaws & Improvements:
-- **Caption Length & Sanitization:** `caption` is not validated for maximum length. An attacker can submit a 100,000 character caption, bloating database rows and distorting UI cards in the gallery.
+- ছবির ক্যাপশনের কোনো ম্যাক্সিমাম সাইজ লিমিট নেই। কেউ চাইলে ৫০,০০০ অক্ষরের টেক্সট পাঠিয়ে ডাটাবেস ভারী করে দিতে পারে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Validate that `imageUrl` strictly matches the domain:
+- ইমেজ ইউআরএলটি অবশ্যই আপনার সুপাবেস স্টোরেজ ডোমেনের কিনা তা নিশ্চিত করুন:
   ```javascript
-  const ALLOWED_STORAGE_PREFIX = 'https://rbrrkphtobxcmnzshnqj.supabase.co/storage/v1/object/public/gallery/';
-  if (!imageUrl.startsWith(ALLOWED_STORAGE_PREFIX)) {
-      return res.status(400).json({ error: 'Invalid image URL source.' });
+  const ALLOWED_URL = 'https://rbrrkphtobxcmnzshnqj.supabase.co/storage/v1/object/public/gallery/';
+  if (!imageUrl.startsWith(ALLOWED_URL)) {
+      return res.status(400).json({ error: 'ভুল ইমেজ সোর্স!' });
   }
   ```
 
 ---
 
-### 5. `vercel.json`
+### ৫. `vercel.json`
+
 #### 🔴 Security & Critical Bugs:
-- **Missing `Strict-Transport-Security` (HSTS):** Missing HSTS header. In production, browsers can be downgraded to HTTP via SSL stripping attacks unless HSTS is enforced (`max-age=31536000; includeSubDomains; preload`).
-- **CSP Incomplete `connect-src` Blocking Fallback Endpoints:** Lines 71–73 define `connect-src`. Notice that `https://api.mcsrvstat.us` is whitelisted, but **`https://api.mcstatus.io` IS MISSING**.
-  In `assets/js/utils.js` (lines 11–15), client-side JavaScript tries to fetch `https://api.mcstatus.io` if `/api/status` fails! When that happens, the browser's Content Security Policy blocks the request, logging a CSP violation and breaking client fallback!
+- **HSTS হেডার অনুপস্থিত:** `Strict-Transport-Security` হেডার না থাকায় ব্যবহারকারীর কানেকশনকে হ্যাকাররা ডাউনগ্রেড করে অনিরাপদ HTTP-তে নিয়ে যেতে পারে।
+- **সিএসপি (CSP) পলিসিতে ফলব্যাক এপিআই ব্লক:** ৭২ নম্বর লাইনে `connect-src`-এ `https://api.mcsrvstat.us` অনুমতি দেওয়া আছে, কিন্তু **`https://api.mcstatus.io` বাদ পড়েছে**! ফলে সার্ভার স্ট্যাটাস দেখার সময় মেইন এপিআই ফেইল করলে ব্রাউজার যখন `mcstatus.io`-তে রিকোয়েস্ট পাঠাতে যায়, তখন ব্রাউজারের সিকিউরিটি পলিসি নিজেই সেই রিকোয়েস্ট ব্লক করে দেয়!
 
 #### ⚠️ Performance & Speed Issues:
-- **Browser Caching for HTML Files Missing:** Root and subpage HTML documents have no explicit `Cache-Control` header, relying on Vercel defaults. HTML should have `public, max-age=0, must-revalidate` so updates deploy instantly without service worker stale cache conflicts.
-- **Asset Cache Stale Risk:** Assets have `max-age=3600, stale-while-revalidate=86400`. Without build-hash cache busting (e.g. `style.abc123.css`), users can receive mixed, outdated JS/CSS for up to 24 hours.
+- মূল এইচটিএমএল ফাইলগুলোতে কোনো `Cache-Control` ডিফাইন করা নেই। ফলে ওয়েবসাইট আপডেট করলে কোনো কোনো ইউজারের কাছে পুরনো পেজ ক্যাশ থেকে লোড হতে পারে।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- Lines 34–37 rewrite `/api/:path*` to `/404.html` with `"statusCode": 404`. While good for security, returning HTML for failed API routes confuses fetch handlers expecting JSON.
+- `"cleanUrls": true` দেওয়া আছে, কিন্তু `sitemap.xml`-এ লিংকগুলোতে শেষে স্ল্যাশ (`/vote/`) দেওয়া। এটি রিডাইরেক্ট বাড়িয়ে পেজ লোড সামান্য ধীর করে।
 
 #### 🟠 Logic Flaws & Improvements:
-- Clean URLs are enabled (`"cleanUrls": true`), which is great for SEO. However, `sitemap.xml` has trailing slashes (e.g. `/vote/`), while `cleanUrls` strips them by default unless specifically handled.
+- `/api/:path*` ফেইল করলে `/404.html` রিটার্ন করা হয়। এপিআই রিকোয়েস্টে এইচটিএমএল পেজ রিটার্ন করলে ফ্রন্টএন্ড জাভাস্ক্রিপ্ট JSON পার্স করতে গিয়ে `SyntaxError: Unexpected token < in JSON` এরর দেয়। এপিআই-এর জন্য JSON এরর দেওয়া উচিত।
 
 #### 🚀 Modernization & UX Suggestions:
-- Add `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
-- Add `https://api.mcstatus.io` to `connect-src` in CSP.
-
----
-
-## Module 2: Voting System & Supabase Integration
-
-### 1. `vote/config.js`
-#### 🔴 Security & Critical Bugs:
-- **Code Duplication & Source of Truth Divergence:** `vote/config.js` defines `VOTE_SITES`. However, `assets/js/core.js` (lines 120–129) defines an almost identical hardcoded array! If a server admin adds a new voting site or changes a cooldown in `config.js`, any page relying on `core.js` fallback will have outdated or conflicting cooldown logic.
-
-#### ⚠️ Performance & Speed Issues:
-- Global scope pollution: assigns directly to `window.VOTE_SITES`.
-
-#### 🎨 UI/UX, SEO & Responsiveness:
-- Cooldown hours are fixed at 6 or 24 hours. Some sites (like Minecraft-MP) allow voting every 24 hours from exact timestamp, while TopG allows every 12 or 6 hours depending on VIP status.
-
-#### 🟠 Logic Flaws & Improvements:
-- Sites config lacks Minecraft Bedrock deep links or username parameter template syntax (e.g. `{username}`).
-
-#### 🚀 Modernization & UX Suggestions:
-- Delete the duplicate array in `core.js` and make `vote/config.js` the single shared module across all pages.
-
----
-
-### 2. `vote/validation.js`
-#### 🔴 Security & Critical Bugs:
-- **Bedrock vs Java Username Regex Permissiveness:** Line 2:
-  ```javascript
-  const USERNAME_REGEX = /^[a-zA-Z0-9_. *+-]{3,24}$/;
+- `vercel.json`-এ সিকিউরিটি হেডার যুক্ত করুন:
+  ```json
+  {
+    "key": "Strict-Transport-Security",
+    "value": "max-age=31536000; includeSubDomains; preload"
+  }
   ```
-  Allows characters like `+`, `-`, `*`, spaces. While Bedrock gamertags can have spaces and Floodgate uses `.` or `*` prefixes, allowing strings like `+++`, `---`, or `***` passes validation. More critically, spaces in usernames can cause SQL ILIKE wildcard confusion and broken avatar image URLs.
-
-#### ⚠️ Performance & Speed Issues:
-- Minimal impact. Regex is simple and fast.
-
-#### 🎨 UI/UX, SEO & Responsiveness:
-- N/A.
-
-#### 🟠 Logic Flaws & Improvements:
-- **`sanitizeText` vs `escapeHtml` Namespace Clash:** `validation.js` defines `sanitizeText(str)`, `utils.js` defines `escapeHtml(text)`, and `navbar.js` defines another `escapeHtml`. There are 3 different HTML escaping functions declared globally! If one is loaded before the other, inconsistencies arise.
-
-#### 🚀 Modernization & UX Suggestions:
-- Unify HTML escaping into `HavenCraftCore.escapeHtml()`.
+- CSP `connect-src`-এ `https://api.mcstatus.io` যোগ করুন।
 
 ---
 
-### 3. `vote/cooldown.js`
-#### 🔴 Security & Critical Bugs:
-- **Client-Side Clock Drift / User Clock Manipulation:** Line 47:
-  ```javascript
-  const now = Date.now();
-  ```
-  The cooldown calculation compares Supabase's server timestamp (UTC) directly with the user's client machine time (`Date.now()`).
-  - If a player's PC clock is set 15 minutes slow, their cooldown shows 24 hours and 15 minutes!
-  - If a player sets their system clock forward by 1 day, all buttons instantly switch to "Ready to vote", misleading the user to click and get rejected by the external vote site!
-  - **Solution:** Measure server-to-client clock offset during initial ping (`serverTime - Date.now()`) and adjust `now`.
-
-#### ⚠️ Performance & Speed Issues:
-- **Nested `O(N * M)` Loop with Regex on Every Render:** Lines 72–88 loop through every database vote record and run `cleanKey.replace(/[^a-z0-9]/g, '')` and multiple string concatenations (`+ 'org'`, `+ 'com'`) for every alias on every site. For users with hundreds of historical votes, this runs thousands of regex replacements on the main thread during UI render.
-
-#### 🎨 UI/UX, SEO & Responsiveness:
-- When cooldown reaches `00:00:00`, `formatCountdown(0)` returns `'00:00:00'`, which is visually confusing unless immediately refreshed to "Ready".
-
-#### 🟠 Logic Flaws & Improvements:
-- **Fragile Alias Matching:** Lines 74–81 match `cleanKey === cleanAlias + 'org'`. If `cleanAlias` is `'topminecraftservers'` and `cleanKey` is `'topminecraftserversorg'`, it matches. But what if the DB returns `topminecraftservers-org`? `cleanKey` is `topminecraftserversorg`, while `alias` is `topminecraftservers.org` -> `cleanAlias` is `topminecraftserversorg`, so `cleanKey === cleanAlias + 'org'` tests `topminecraftserversorg === topminecraftserversorgorg` (FALSE)!
-
-#### 🚀 Modernization & UX Suggestions:
-- Pre-clean aliases once on application start rather than repeatedly executing regex inside the vote iteration loop.
+## মডিউল ২: ভোট সিস্টেম ও সুপাবেস ডাটাবেস
 
 ---
 
-### 4. `vote/supabase.js`
+### ১. `vote/config.js`
+
 #### 🔴 Security & Critical Bugs:
-- **SQL ILIKE Wildcard Injection:** Line 35:
-  ```javascript
-  .ilike('username', cleanUsername)
-  ```
-  If `cleanUsername` contains `%` or `_`, PostgreSQL treats them as pattern wildcards. Searching for `_` matches ANY single-character username. Entering `%` queries votes for all players!
-  - **Fix:** Escape `%` and `_` with `cleanUsername.replace(/[%_]/g, '\\$&')`.
+- **কোড ডুপ্লিকেশন ও অমিল:** এখানে `VOTE_SITES` কনফিগারেশন আছে, আবার `assets/js/core.js` ফাইলেও (লাইন ১২০–১২৯) একই তালিকা কপি-পেস্ট করা আছে। ভবিষ্যতে নতুন কোনো সাইট যোগ করলে বা কুলডাউন পরিবর্তন করলে এক জায়গায় আপডেট হবে কিন্তু অন্য পেজে পুরনো কুলডাউন থেকে যাবে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Massive 5,000 Row Network Transfer for Client-Side Counting:** Lines 81–86, 135–141, and 175–181 query `.limit(5000)` raw records to count votes in JavaScript:
+- কোডটি গ্লোবাল `window.VOTE_SITES`-এ সরাসরি ভেরিয়েবল রাখছে, যা বড় অ্যাপ্লিকেশনে নেমস্পেস কলিশন তৈরি করতে পারে।
+
+#### 🎨 UI/UX, SEO & Responsiveness:
+- সাইটগুলোর কুলডাউন ফিক্সড ৬ বা ২৪ ঘণ্টা। কিন্তু কিছু সাইটের নিজস্ব টাইমিং ভিন্ন থাকে।
+
+#### 🟠 Logic Flaws & Improvements:
+- ইউজারনেম অটো-ফিল করার জন্য কোনো ডাইনামিক টেমপ্লেট স্ট্রিং (যেমন `{username}`) নেই।
+
+#### 🚀 Modernization & UX Suggestions:
+- `core.js` থেকে ডুপ্লিকেট তালিকাটি মুছে দিয়ে শুধুমাত্র `vote/config.js` কেই একমাত্র তথ্যসূত্র (Single Source of Truth) হিসেবে রাখুন।
+
+---
+
+### ২. `vote/validation.js`
+
+#### 🔴 Security & Critical Bugs:
+- **ইউজারনেম ফিল্টারিংয়ে অতিরিক্ত ছাড়:** ২ নম্বর লাইনে `^[a-zA-Z0-9_. *+-]{3,24}$` দেওয়া হয়েছে। ফলে কেউ যদি `+++` বা `***` লেখে তাও ভ্যালিড দেখাবে। বেডরক প্লেয়ারদের জন্য স্পেস এবং Floodgate-এর ডট `.` দরকার হলেও অপ্রয়োজনীয় চিহ্ন বাদ দেওয়া উচিত।
+
+#### ⚠️ Performance & Speed Issues:
+- কোনো সমস্যা নেই, রেজেক্স খুব দ্রুত কাজ করে।
+
+#### 🎨 UI/UX, SEO & Responsiveness:
+- প্রযোজ্য নয়।
+
+#### 🟠 Logic Flaws & Improvements:
+- **একই ফাংশন তিন ফাইলে তিনবার লেখা:** `validation.js`-এ আছে `sanitizeText`, আবার `utils.js`-এ আছে `escapeHtml`, এবং `navbar.js`-এ আছে আরেকটা `escapeHtml`। একাধিক স্ক্রিপ্টে আলাদা আলাদা ফাংশন থাকায় বিভ্রান্তি তৈরি হয়।
+
+#### 🚀 Modernization & UX Suggestions:
+- সেন্ট্রাল ফাংশন হিসেবে `HavenCraftCore.escapeHtml()` তৈরি করুন।
+
+---
+
+### ৩. `vote/cooldown.js`
+
+#### 🔴 Security & Critical Bugs:
+- **ব্যবহারকারীর পিসির ঘড়ি অনুযায়ী কুলডাউন ভুল হওয়া (Client Clock Tampering):** ৪৭ নম্বর লাইনে `const now = Date.now();` লেখা হয়েছে। অর্থাৎ ইউজারের কম্পিউটারের বর্তমান ঘড়ি অনুযায়ী হিসাব হচ্ছে।
+  - যদি কোনো প্লেয়ারের পিসির ঘড়ি ১০ মিনিট স্লো থাকে, তাহলে কুলডাউন ২৪ ঘণ্টার জায়গায় দেখাবে ২৪ ঘণ্টা ১০ মিনিট!
+  - আবার কোনো প্লেয়ার তার পিসির ঘড়ি ১ দিন বাড়িয়ে দিলে সাথে সাথে সব বাটন "Ready to vote" হয়ে যাবে (যদিও সে ভোট সাইটে গেলে ভোট দিতে পারবে না)।
+  - **সমাধান:** সার্ভারের বর্তমান সময়ের সাথে ইউজারের পিসির সময়ের পার্থক্য বের করে কুলডাউন হিসাব করা দরকার।
+
+#### ⚠️ Performance & Speed Issues:
+- ৭২–৮৮ নম্বর লাইনে প্রতিটি ডাটাবেস ভোটের জন্য একাধিকবার রেগুলার এক্সপ্রেশন (`.replace(/[^a-z0-9]/g, '')`) ও স্ট্রিং যোগ করা হচ্ছে। ইউজারের অনেক ভোট থাকলে মোবাইল ব্রাউজারে ল্যাগ হতে পারে।
+
+#### 🎨 UI/UX, SEO & Responsiveness:
+- টাইমার শেষ হয়ে `00:00:00` হলে ইউজার কনফিউজড হতে পারে যদি সাথে সাথে বাটনটি সবুজ হয়ে "ভোট দিন" না হয়।
+
+#### 🟠 Logic Flaws & Improvements:
+- ডাটাবেস সাইট নেইম ও এলিয়াস ম্যাচিংয়ের লজিকে জটিলতা রয়েছে। কিছু সাইটের ডোমেইন এক্সটেনশন (`.nl`, `.io`) ম্যাচ করতে গিয়ে মিসম্যাচ হতে পারে।
+
+#### 🚀 Modernization & UX Suggestions:
+- এলিয়াস তালিকাটি আগে থেকেই একবার ক্লিন করে মেমরিতে রেখে দিন, প্রতি সেকেন্ডে লুপের মধ্যে রেজেক্স না চালিয়ে।
+
+---
+
+### ৪. `vote/supabase.js`
+
+#### 🔴 Security & Critical Bugs:
+- **SQL ওয়াইল্ডকার্ড ইনজেকশন:** ৩৫ নম্বর লাইনে `.ilike('username', cleanUsername)` ব্যবহার করা হয়েছে। যদি কোনো ইউজার ইনপুটে `%` বা `_` চিহ্ন দেয়, তবে পোস্টগ্রেস এসকিউএল এটিকে প্যাটার্ন ধরে নেয়। `%` দিলে সবার ভোট কুয়েরি হয়ে যাবে!
+  - **ফিক্স:** `cleanUsername.replace(/[%_]/g, '\\$&')` দিয়ে চিহ্নগুলো এস্কেপ করুন।
+
+#### ⚠️ Performance & Speed Issues:
+- **৫,০০০ রো ক্লায়েন্টে ডাউনলোড করার মারাত্মক অপচয়:** ৮১–৮৬ এবং ১৩৫–১৪১ নম্বর লাইনে ভোট সংখ্যা গুনার জন্য ব্রাউজারে ৫,০০০টি ডাটাবেস রো নামিয়ে আনা হচ্ছে!
   ```javascript
-  const { data: rows, error } = await window.supabaseVote
+  const { data: rows } = await window.supabaseVote
       .from('votes')
       .select('username')
       .gte('created_at', startDate)
       .limit(5000);
   ```
-  Downloading 5,000 JSON rows into mobile browser memory over 4G/3G networks wastes hundreds of kilobytes of data, drains battery, and causes UI stutter!
-- **Data Inaccuracy on High Volume:** If the server has >5,000 votes in a month, `.limit(5000)` truncates the data! The leaderboard becomes statistically incorrect because votes beyond the 5,000th most recent vote are discarded!
-- **All-Time Wall of Fame Bug:** `fetchWallOfFame('alltime')` (line 135) queries with `.limit(5000)`. Any player whose votes occurred before the last 5,000 votes is completely excluded from the "All-Time" leaderboard!
+  সাধারণ একটি সংখ্যা বের করার জন্য মোবাইল ফোনের ডাটা দিয়ে এত বড় ফাইল ডাউনলোড করানো খুবই অপেশাদার এবং ধীরগতির।
+- **ডাটার ভুল পরিসংখ্যান (৫,০০০ লিমিট সমস্যা):** সার্ভারে যদি মাসে ৫,০০০ এর বেশি ভোট পড়ে, তবে ৫,০০১তম ভোটটি আর হিসাবে আসবে না। ফলে লিডারবোর্ড পুরোপুরি ভুল রেজাল্ট দেখাবে!
+- **অল-টাইম লিডারবোর্ডের ভুল:** `fetchWallOfFame('alltime')`-এও ৫,০০০ লিমিট দেওয়া। অর্থাৎ যারা সার্ভারের শুরুর দিকে ভোট দিয়েছিল তাদের নাম কখনোই অল-টাইম তালিকায় আসবে না!
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- N/A.
+- প্রযোজ্য নয়।
 
 #### 🟠 Logic Flaws & Improvements:
-- **Inconsistent Client Initialization Check:** `fetchUserVotes` and `fetchPlayerStats` check `window.HavenCraftCore.initSupabase()`, but `fetchLeaderboard` and `fetchWallOfFame` do NOT. If `window.supabaseVote` is not yet initialized when leaderboards load, they silently return empty arrays `[]`.
+- `fetchLeaderboard` এবং `fetchWallOfFame` ফাংশনে `initSupabase()` কল করা হয়নি। সুপাবেস রেডি হওয়ার আগে এগুলো কল হলে ফাঁকা অ্যারে রিটার্ন করে বসে থাকে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Create a PostgreSQL Database View or RPC Function in Supabase:
+- সুপাবেস ডাটাবেসে একটি সার্ভার-সাইড ফাংশন (RPC) অথবা ভিউ (View) তৈরি করুন:
   ```sql
   CREATE OR REPLACE FUNCTION get_vote_leaderboard(period_start timestamptz, limit_count int)
   RETURNS TABLE (username text, vote_count bigint) AS $$
@@ -273,112 +273,90 @@ HavenCraft-main represents a rich, feature-packed static website with serverless
     LIMIT limit_count;
   $$ LANGUAGE sql STABLE;
   ```
-  This reduces network payload from ~250KB of raw rows to less than 1KB of aggregated JSON, boosting speed by 2500%!
+  এতে ৫,০০০ রো ডাউনলোড করার বদলে ব্রাউজারে মাত্র ১০টি রো আসবে, সাইট সাথে সাথে ২৫ গুণ দ্রুত হয়ে যাবে!
 
 ---
 
-### 5. `vote/ui.js` & `vote/vote.js`
+### ৫. `vote/ui.js` & `vote/vote.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Broken Single-Quote Escaping in Dynamic Inline Event Handlers:** Line 39 in `vote/ui.js`:
+- **ইনলাইন জাভাস্ক্রিপ্টে ভাঙা এস্কেপিং:** `vote/ui.js`-এর ৩৯–৪০ নম্বর লাইনে:
   ```javascript
   const safeSiteName = sanitizeText(site.name).replace(/'/g, "\\'");
-  let btnHTML = `<a ... onclick="if(window.handleVoteClick) window.handleVoteClick('${site.id}', '${safeSiteName}', ${site.cooldown_hours || 24})">...</a>`;
+  let btnHTML = `<a ... onclick="if(window.handleVoteClick) window.handleVoteClick('${site.id}', '${safeSiteName}', ...)">`;
   ```
-  `sanitizeText` already replaced single quotes `'` with `&#039;`! Then `.replace(/'/g, "\\'")` does nothing. Moreover, `site.id` is NOT sanitized before insertion into the inline JS string `'${site.id}'`. If `site.id` contains quotes or malicious characters, it causes a syntax error or code execution vulnerability.
-- **URL Parameter Corruption on Hash Links:** Line 35:
-  ```javascript
-  const separator = siteUrl.includes('?') ? '&' : '?';
-  siteUrl = `${siteUrl}${separator}username=${encodeURIComponent(currentUsername)}`;
-  ```
-  If `siteUrl` is `'#'`, it generates `#?username=...`. Clicking it causes an invalid in-page anchor jump rather than opening the voting website.
+  `sanitizeText` আগেই সিঙ্গল কোটকে `&#039;`-এ রূপান্তর করে ফেলে, ফলে পরের রিপ্লেস কাজ করে না। তাছাড়া `site.id` এস্কেপ করা হয়নি। এটি ইনলাইন এইচটিএমএল-এ কোড ব্রেক করতে পারে।
+- **হ্যাশ লিংকে প্যারামিটার যুক্ত হওয়া:** ৩২–৩৬ নম্বর লাইনে যদি সাইটের লিঙ্ক `#` হয়, কোডটি সেটিকে বানায় `#?username=...` যা ব্রাউজারে কোনো লিঙ্কে না গিয়ে পেজ জাম্প করায়।
 
 #### ⚠️ Performance & Speed Issues:
-- **Memory & Timer Drift on 24-Hour `setTimeout`:** Line 333 in `vote.js`:
-  ```javascript
-  voteReminderTimer = setTimeout(() => { ... }, cooldownMs);
-  ```
-  `cooldownMs` can be up to 86,400,000 ms (24 hours). Browsers aggressively throttle or pause timers in background tabs or during laptop sleep. Relying on an in-memory `setTimeout` for 24-hour notifications will fail 99% of the time when the user closes the tab or locks their screen.
+- **২৪ ঘণ্টার `setTimeout` কাজ না করা:** `vote.js`-এর ৩৩৩ নম্বর লাইনে ২৪ ঘণ্টার (৮৬,৪০০,০০০ মিলি সেকেন্ড) টাইমার সেট করা হয়েছে:
+  `voteReminderTimer = setTimeout(..., cooldownMs);`
+  কোনো ব্রাউজারই ব্যাকগ্রাউন্ড ট্যাবে বা ল্যাপটপ স্লিপে গেলে এত বড় টাইমার চালু রাখতে পারে না। ইউজার ট্যাব বন্ধ করলে এই নোটিফিকেশন আর কখনোই আসবে না!
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Bedrock Gametag Truncation (`maxlength="16"`):** Line 62 of `vote/index.html` sets `maxlength="16"`. Bedrock players with 16-character Xbox gamertags plus the Floodgate prefix (`.`) or space cannot enter their full username!
-- Mobile layout: Countdown button text (`00:00:00`) overflows card boundaries on small mobile screens (<360px width).
+- **বেডরক প্লেয়ারদের নাম আটকে যাওয়া (`maxlength="16"`):** `vote/index.html`-এর ৬২ নম্বর লাইনে ইনপুট বক্সে `maxlength="16"` দেওয়া। বেডরক প্লেয়ারদের নামের শুরুতে ডট (`.`) সহ ১৭–২৪ অক্ষর হতে পারে, ফলে তারা পুরো নাম টাইপই করতে পারেন না!
+- ছোট মোবাইল স্ক্রিনে (৩৬০ পিক্সেলের নিচে) কাউন্টডাউন টাইমার বক্স ভেঙে নিচে নেমে যায়।
 
 #### 🟠 Logic Flaws & Improvements:
-- Redundant DOM polling in `startCountdownTimers()`: updates DOM every 1000ms even when elements are outside the viewport.
+- `clearCountdown()` ঠিকমতো ক্লিয়ার হলেও ইউজার বারবার "Check Status" চাপলে অপ্রয়োজনীয় রি-রেন্ডার হয়।
 
 #### 🚀 Modernization & UX Suggestions:
-- Eliminate inline `onclick` string concatenation. Use standard `addEventListener` and `data-` attributes:
-  ```javascript
-  btn.dataset.siteId = site.id;
-  btn.dataset.cooldown = site.cooldown_hours;
-  ```
-- Use Service Worker Push Notifications or Web Background Synchronization for vote reminders instead of client-side `setTimeout`.
+- ইনলাইন `onclick="..."` স্ট্রিং বাদ দিয়ে ইভেন্ট লিসেনার (`addEventListener`) ব্যবহার করুন।
+- ইনপুট ফিল্ডের `maxlength="16"` পরিবর্তন করে `maxlength="24"` করুন।
+- ২৪ ঘণ্টার নোটিফিকেশনের জন্য ব্রাউজার সার্ভিস ওয়ার্কার পুশ নোটিফিকেশন বা ব্যাকগ্রাউন্ড সিঙ্ক ব্যবহার করুন।
 
 ---
 
-## Module 3: Core Infrastructure, Utilities & Service Worker
+## মডিউল ৩: কোর স্ক্রিপ্ট, ইউটিলিটি ও সার্ভিস ওয়ার্কার
 
-### 1. `assets/js/core.js`
+---
+
+### ১. `assets/js/core.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Public Supabase Anon Keys & RLS Dependency Risk:** Lines 27, 31, 35 contain Supabase anonymous API keys. While anon keys are designed for client exposure, they **critically depend on strict PostgreSQL Row Level Security (RLS)**. If RLS is accidentally disabled on `votes`, `player_stats`, or `gallery`, any anonymous user can issue `DELETE` or `UPDATE` queries directly from DevTools console to erase the database!
-- **Bedrock User Lockout on Client Login:** Line 86:
+- **সুপাবেস পাবলিক কি ও RLS পলিসির ওপর ঝুঁকি:** এখানে সুপাবেসের পাবলিক এনন কি রয়েছে। এটি স্বাভাবিক হলেও, সুপাবেস ডাটাবেসে যদি **Row Level Security (RLS)** ঠিকমতো অন না থাকে, তবে যে কেউ ব্রাউজার কনসোল থেকে `supabase.from('votes').delete()` চালিয়ে সমস্ত ভোট রেকর্ড ডিলিট করে দিতে পারবে!
+- **বেডরক প্লেয়ারদের লগইন ব্লক:** ৮৬ নম্বর লাইনে:
   ```javascript
   if (!gametag || gametag.length < 3 || gametag.length > 16) {
       return { success: false, error: 'Invalid username' };
   }
   ```
-  Bedrock/Floodgate usernames often exceed 16 characters (e.g. `.PlayerName123456` = 17 chars). Valid Bedrock players are blocked from logging in across the entire site!
+  ১৬ অক্ষরের বেশি নাম হলে কোড এরর দিচ্ছে! এর ফলে সার্ভারের সকল বেডরক প্লেয়ার সাইটে লগইন করতে পারছেন না।
 
 #### ⚠️ Performance & Speed Issues:
-- **Uncached Supabase Client Instances:** If `initSupabase()` is triggered multiple times across components, it re-verifies config and re-assigns clients without early exit checks.
+- কোনো বড় সমস্যা নেই।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- N/A.
+- প্রযোজ্য নয়।
 
 #### 🟠 Logic Flaws & Improvements:
-- `login()` stores raw `gametag` in `localStorage` without character validation. If someone types HTML characters, it could lead to DOM XSS if inserted anywhere via `.innerHTML`.
+- `login()` ফাংশনে ইউজারের নামের ভেতর কোনো ক্ষতিকর স্ক্রিপ্ট বা ট্যাগ আছে কিনা চেক না করেই তা লোকাল স্টোরেজে রাখা হচ্ছে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Expand username validation to support Bedrock (up to 24 characters, matching Floodgate prefix standards):
+- ইউজারনেম ভ্যালিডেশন ২৪ অক্ষর পর্যন্ত অনুমোদন করুন এবং Floodgate প্লেয়ারদের সাপোর্ট দিন:
   ```javascript
-  const isValid = /^[a-zA-Z0-9_. *+-]{3,24}$/.test(gametag);
+  if (!gametag || gametag.length < 3 || gametag.length > 24) { ... }
   ```
 
 ---
 
-### 2. `assets/js/utils.js`
+### ২. `assets/js/utils.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Relative API URL Resolution Breakage:** Line 6:
-  ```javascript
-  const API_URL = '../api/status';
-  ```
-  On root pages (`/index.html` or `/`), `../api/status` resolves to `http://domain.com/../api/status` -> `/api/status`. But on deep subpages (e.g. `/gallery/upload.html` or nested docs), `../api/status` resolves incorrectly. It should always be absolute root: `'/api/status'`.
-- **Unhandled Rejection Error Swallowing:** Lines 53–60:
-  ```javascript
-  window.addEventListener('unhandledrejection', (event) => {
-      if (reason instanceof TypeError && reason.message.includes('fetch')) {
-          showNetworkError('default', reason);
-          event.preventDefault(); // Suppresses console error
-      }
-  });
-  ```
-  `event.preventDefault()` suppresses the entire stack trace from browser DevTools, blinding developers and QA engineers from seeing the actual URL or line number where fetch failed!
+- **আপেক্ষিক পাথ ভাঙা (`../api/status`):** ৬ নম্বর লাইনে `API_URL = '../api/status'` দেওয়া। হোমপেজে (`/index.html`) এটি ঠিক থাকলেও কোনো গভীর ফোল্ডারে (যেমন `/gallery/upload.html`) গেলে এটি ভুল ইউআরএল-এ রিকোয়েস্ট পাঠাবে। এটি সবসময় `'/api/status'` হওয়া উচিত।
+- **কনসোল এরর ঢেকে ফেলা (Error Swallowing):** ৫৩–৬০ নম্বর লাইনে `unhandledrejection` ইভেন্টে `event.preventDefault()` ব্যবহার করা হয়েছে। এতে করে আসল এরর কোন ফাইলে এবং কোন লাইনে হয়েছে তা ব্রাউজার কনসোলে আর দেখা যায় না, ফলে বাগ ফিক্স করা কঠিন হয়ে পড়ে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Indefinite Background Polling:** Line 285:
-  ```javascript
-  setInterval(fetchServerStatus, REFRESH_INTERVAL);
-  ```
-  Runs every 30 seconds unconditionally, even when the user minimizes the browser or switches to another tab! This wastes mobile data and server CPU. It should be paused when `document.hidden === true`.
+- **ট্যাব মিনিমাইজ থাকলেও অনন্তকাল ধরে ডাটা টানা:** ২৮৫ নম্বর লাইনে `setInterval(fetchServerStatus, 30000)` রয়েছে। ইউজার যদি অন্য ট্যাবে কাজ করে বা ব্রাউজার মিনিমাইজ করে ঘুমিয়েও পড়ে, সাইট প্রতি ৩০ সেকেন্ড পর পর সার্ভারে রিকোয়েস্ট পাঠাতেই থাকে। এতে ইউজারের মোবাইল ডাটা এবং আপনার সার্ভারের প্রসেসর খরচ হয়।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- When the server is offline, the large player count renders `—` without explaining whether the server is restarting or down for maintenance.
+- সার্ভার অফলাইন থাকলে বড় সংখ্যাটি শুধুমাত্র `—` দেখায়। সার্ভার রক্ষণাবেক্ষণে আছে নাকি বন্ধ, তা বুঝা যায় না।
 
 #### 🟠 Logic Flaws & Improvements:
-- **Script Path Sniffing Fragility:** `getRootPath()` loops through `document.getElementsByTagName('script')` matching `cleanSrc.includes(scriptName)`. If scripts are bundled (like by `build.js` into `bundle.min.js`), `getRootPath` fails and returns `'./'`, breaking asset links!
+- `getRootPath()` ফাংশনটি স্ক্রিপ্টের নাম খুঁজে পাথ বের করে। কিন্তু `build.js` দিয়ে সব স্ক্রিপ্ট এক ফাইলে বান্ডেল করলে এই ফাংশনটি ফেইল করবে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Wrap `setInterval` with `Page Visibility API`:
+- Page Visibility API ব্যবহার করে ব্যাকগ্রাউন্ডে থাকলে পোলিং বন্ধ রাখুন:
   ```javascript
   document.addEventListener('visibilitychange', () => {
       if (document.hidden) clearInterval(statusTimer);
@@ -388,130 +366,92 @@ HavenCraft-main represents a rich, feature-packed static website with serverless
 
 ---
 
-### 3. `assets/js/navbar.js`
+### ৩. `assets/js/navbar.js`
+
 #### 🔴 Security & Critical Bugs:
-- **SQL ILIKE Wildcard Search Injection:** Line 450:
-  ```javascript
-  .ilike('username', `%${query}%`)
-  ```
-  If a user types `%` into the player search bar, Supabase executes `WHERE username ILIKE '%%%';`, returning the first 10 random players in the database rather than a relevant match.
+- **এসকিউএল ওয়াইল্ডকার্ড ইনজেকশন:** ৪৫০ নম্বর লাইনে `.ilike('username', `%${query}%`)` ব্যবহার করা হয়েছে। সার্চ বক্সে `%` লিখলে ডাটাবেসের প্রথম ১০ জন প্লেয়ারকে র‍্যান্ডমলি এনে দেখাবে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Redundant Supabase Script Injection:** Lines 412–432 dynamically inject `@supabase/supabase-js` via DOM manipulation if not loaded. This can create duplicate script tags and race conditions with deferred scripts.
+- ৪১২–৪৩২ নম্বর লাইনে প্রয়োজন হলে ডায়নামিকভাবে সুপাবেস স্ক্রিপ্ট ডমে ইনজেক্ট করা হয়। এতে স্ক্রিপ্ট লোডিংয়ের সময় রেস কন্ডিশন তৈরি হতে পারে।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Missing Accessibility (a11y) ARIA Attributes & Focus Trap:**
-  - `#searchToggle`, `#userBtn`, `#hamburger`, and `.nav-more-btn` lack `aria-expanded="false"`, `aria-haspopup="true"`, and `aria-controls`. Screen reader users cannot tell if menus are open or closed.
-  - `#searchModal` does not trap keyboard focus. When pressing `Tab`, keyboard focus escapes the modal and navigates behind the overlay into the invisible page body!
-- **Mobile Body Scroll Lock Bug:** In `openSearch()` and `openMenu()`, `document.body.style.overflow = 'hidden'` is applied. If an escape key or external event closes one without properly clearing the other, page scrolling remains permanently disabled!
+- **অ্যাক্সেসিবিলিটি (a11y) এর অভাব:** সার্চ বাটন, গেমট্যাগ বাটন এবং মোবাইল মেনু বাটনে কোনো `aria-expanded` বা `aria-haspopup` নেই। দৃষ্টিপ্রতিবন্ধী ব্যক্তিরা যারা স্ক্রিন রিডার ব্যবহার করেন, তারা বুঝতে পারবেন না মেনু খোলা নাকি বন্ধ।
+- **সার্চ মডালে ফোকাস ট্র্যাপ নেই:** সার্চ মডাল খুললে কিবোর্ডের `Tab` বাটন চাপলে ফোকাস মডালের বাইরে পেজের নিচের এলিমেন্টগুলোতে চলে যায়।
+- **মোবাইলে স্ক্রল লক হয়ে যাওয়া:** মেনু বা সার্চ বন্ধ করার কোনো ইভেন্ট মিস হলে পেজের বডিতে `overflow: hidden` থেকে যায়, ফলে ইউজার আর নিচে স্ক্রল করতে পারেন না।
 
 #### 🟠 Logic Flaws & Improvements:
-- `applyLoginUI` sets image src to `https://mc-heads.net/avatar/...`. If the user is a Bedrock player with a `.` prefix, `mc-heads.net` will 404 unless Steve fallback is handled cleanly.
+- গেমট্যাগ ইনপুটে `maxlength="16"` থাকায় বেডরক প্লেয়াররা নাম লিখতে পারেন না।
 
 #### 🚀 Modernization & UX Suggestions:
-- Implement complete ARIA support and focus trap in `searchModal`.
-- Sanitize ILIKE queries: `query.replace(/[%_\\]/g, '\\$&')`.
+- সার্চ কোয়েরি স্যানিটাইজ করুন এবং কিবোর্ড অ্যাক্সেসিবিলিটি (Focus Trapping) যুক্ত করুন।
 
 ---
 
-### 4. `assets/js/components.js`
+### ৪. `assets/js/components.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Flash of Unstyled Content (FOUC) & Layout Shift (CLS):** Lines 12–25:
-  ```javascript
-  if (!document.querySelector('link[href*="assets/css/pages.css"]')) {
-      const pagesCss = document.createElement('link');
-      pagesCss.rel = 'stylesheet';
-      pagesCss.href = root + 'assets/css/pages.css';
-      document.head.appendChild(pagesCss);
-  }
-  ```
-  Dynamically injecting stylesheets from a deferred JavaScript file means the HTML renders *before* `pages.css` loads. Once the CSS arrives 200ms later, elements jump and re-style, creating a severe Cumulative Layout Shift (CLS) penalty in Google Core Web Vitals!
-  - **Rule:** Stylesheets MUST be linked directly in `<head>` in static HTML, never dynamically injected by deferred scripts.
+- **পেজ কেঁপে ওঠা ও ডিজাইন ভাঙা (FOUC & Layout Shift):** ১২–২৫ নম্বর লাইনে জাভাস্ক্রিপ্ট দিয়ে `pages.css` এবং `animations.css` ইনজেক্ট করা হচ্ছে!
+  যেহেতু জাভাস্ক্রিপ্ট লোড হতে ২০০–৩০০ মিলি সেকেন্ড সময় নেয়, ততক্ষণে ব্রাউজার পেজটি সিএসএস ছাড়াই রেন্ডার করে ফেলে। এরপর হঠাৎ সিএসএস লোড হলে সব লেখা ও বাটন লাফ দিয়ে নিচে নেমে যায়। এতে গুগলের কোর ওয়েব ভাইটালস (Core Web Vitals - CLS) স্কোর মারাত্মকভাবে ক্ষতিগ্রস্ত হয়!
+  - **সমাধান:** সিএসএস কখনোই জাভাস্ক্রিপ্ট দিয়ে ইনজেক্ট করবেন না। প্রতিটি এইচটিএমএল ফাইলের `<head>`-এ সরাসরি `<link rel="stylesheet">` দিয়ে রাখুন।
 
 #### ⚠️ Performance & Speed Issues:
-- Dynamically injecting `<script defer src="assets/js/animations.js">` at line 28 causes late script execution and unpredictable execution ordering.
+- জাভাস্ক্রিপ্ট দিয়ে আবার `animations.js` ইনজেক্ট করায় স্ক্রিপ্ট চলার সঠিক ধারাবাহিকতা নষ্ট হয়।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- Hardcoded copyright year `2026` in `FOOTER_HTML` (line 114). While accurate today, dynamic `new Date().getFullYear()` avoids maintenance oversight.
+- ফুটারের কপিরাইট সাল হার্ডকোড করে `2026` লেখা। ২০২৭ সালে এটি পুরনো দেখাবে যদি ডাইনামিক `new Date().getFullYear()` না করা হয়।
 
 #### 🟠 Logic Flaws & Improvements:
-- Inline `onclick="copyIP(this)"` in `FOOTER_HTML` violates strict Content Security Policy directives if `'unsafe-inline'` is ever removed.
+- ফোটারে ইনলাইন `onclick="copyIP(this)"` রয়েছে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Move `<link rel="stylesheet" href="assets/css/pages.css">` into static HTML `<head>` across all pages.
+- ডাইনামিক সিএসএস ইনজেকশন পুরোপুরি বন্ধ করে এইচটিএমএল-এ লিঙ্ক করুন।
 
 ---
 
-### 5. `assets/js/animations.js`
+### ৫. `assets/js/animations.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Orphaned DOM Nodes on Reduced Motion / Skipped Animation:** Line 25:
-  ```javascript
-  circle.addEventListener('animationend', () => circle.remove());
-  ```
-  If a user has `prefers-reduced-motion: reduce` enabled in Windows/macOS, CSS animations are disabled (`animation: none`). As a result, the `animationend` event **NEVER FIRES**, leaving hundreds of orphaned `<span>` ripple elements accumulating in the DOM memory after every button click!
+- **মেমরি লিক (Memory Leak Bug):** ২৫ নম্বর লাইনে:
+  `circle.addEventListener('animationend', () => circle.remove());`
+  যদি কোনো ইউজারের ডিভাইসে "Reduce Motion" অন থাকে, তবে ব্রাউজার সিএসএস অ্যানিমেশন বন্ধ করে দেয়। ফলে `animationend` ইভেন্ট **কখনোই ফায়ার হয় না**! এতে যতবার বাটনে ক্লিক করা হবে, শত শত অদৃশ্য `<span>` এলিমেন্ট ব্রাউজারের মেমরিতে জমা হতে থাকবে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Arbitrary 100,000 Cap on Counter Animations:** Line 68:
-  ```javascript
-  if (!isNaN(num) && num > 0 && num < 100000) {
-      animateCounter(el, num, suffix);
-  }
-  ```
-  If server stats show 120,000 total votes or $500,000 server money, the animation silently aborts and displays the raw unformatted string! There is no reason to hard-cap counters at 100,000.
+- **১০০,০০০ এর বেশি সংখ্যা হলে অ্যানিমেশন বন্ধ:** ৬৮ নম্বর লাইনে সংখ্যা যদি ১০০,০০০ এর বেশি হয় তবে অ্যানিমেশন অফ করে দেওয়া হয়েছে। সার্ভারের ইকোনমি বা মোট ভোট ১ লাখের বেশি হলে আর অ্যানিমেশন হবে না।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- Intro overlay (`hc-intro-overlay`) runs on the first visit of every session. If network is slow, it displays a black screen with logo for 1.4 seconds, delaying First Contentful Paint (FCP).
+- প্রথম ভিজিটে ১.৪ সেকেন্ডের জন্য পুরো স্ক্রিন কালো করে লোগো দেখানো হয়। স্লো নেটে এটি বিরক্তি তৈরি করে।
 
 #### 🟠 Logic Flaws & Improvements:
-- `IntersectionObserver` in `initEnhancedReveal` uses `rootMargin: '0px 0px -40px 0px'`. On mobile screens (<500px), a -40px bottom margin means cards don't reveal until scrolled deeply into view.
+- মোবাইলে স্ক্রল রিভিলের মার্জিন বেশি থাকায় কার্ডগুলো স্ক্রিনে ওঠার অনেক দেরিতে দৃশ্যমান হয়।
 
 #### 🚀 Modernization & UX Suggestions:
-- Fix ripple memory leak with fallback timeout:
-  ```javascript
-  const cleanup = () => circle.remove();
-  circle.addEventListener('animationend', cleanup);
-  setTimeout(cleanup, 600); // Safety fallback
-  ```
+- অ্যানিমেশন শেষ না হলেও যেন ০.৬ সেকেন্ড পর স্বয়ংক্রিয়ভাবে মেমরি থেকে স্প্যান মুছে যায় সেই ব্যাকআপ টাইমআউট দিন।
 
 ---
 
-### 6. `sw.js` (Service Worker)
+### ৬. `sw.js` (সার্ভিস ওয়ার্কার)
+
 #### 🔴 Security & Critical Bugs:
-- **P0 Service Worker 404 File Caching (Case Sensitivity Bug):** Line 23:
-  ```javascript
-  '/vote/UI.js',
-  ```
-  The real file on the disk is `vote/ui.js` (lowercase `ui`). While Windows NTFS is case-insensitive, Linux hosting (Vercel Edge, GitHub Pages, Netlify) is **strictly case-sensitive**! Fetching `/vote/UI.js` returns a **404 Not Found**.
-- **P0 Catastrophic Service Worker Error Caching:** Lines 69–72:
-  ```javascript
-  fetch(event.request).then(response => {
-      const resClone = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
-      return response;
-  })
-  ```
-  Notice: `fetch(event.request)` DOES NOT THROW on HTTP 404, 500, or 502 errors!
-  If the server temporarily returns a 500 Internal Server Error, **the Service Worker caches the 500 error page!**
-  Once cached, the user is permanently locked out with a broken site forever, even after the server recovers, until they clear site data!
-  - **Fix:** ONLY cache if `response.status === 200 && response.type === 'basic'`.
-- **Faulty Promise Evaluation in Navigation Fallback:** Line 77:
-  ```javascript
-  return caches.match('/') || caches.match('/index.html');
-  ```
-  `caches.match('/')` returns a `Promise`! In JavaScript, all Promise objects are **truthy**. Therefore, `caches.match('/') || ...` ALWAYS evaluates to the first Promise and NEVER reaches `caches.match('/index.html')`!
+- **P0 বড় হাতের অক্ষরের কারণে 404 ফাইল এরর:** ২৩ নম্বর লাইনে লেখা রয়েছে:
+  `'/vote/UI.js'` (বড় হাতের UI!)
+  উইন্ডোজে এটি কাজ করলেও লিনাক্স সার্ভার (Vercel, GitHub, Cloudflare)-এ ফাইল নাম কেস-সেনসিটিভ। সেখানে ফাইলটির নাম `vote/ui.js` (ছোট হাতের)। ফলে সার্ভার এটি খুঁজে না পেয়ে ৪MD Not Found এরর দিবে এবং সার্ভিস ওয়ার্কার ইন্সটল ফেইল করবে!
+- **P0 মারাত্মক এরর পেজ ক্যাশ হয়ে যাওয়া:** ৬৯–৭২ নম্বর লাইনে:
+  `fetch(event.request).then(response => { caches.put(event.request, response.clone()) })`
+  সার্ভার যদি কোনো কারণে সাময়িক ৫০০ বা ৪০৪ এরর দেয়, তবে ব্রাউজার সেই এরর পেজটিকেই ক্যাশে পার্মানেন্ট সেভ করে ফেলে! পরবর্তীতে সার্ভার ঠিক হলেও ইউজার বারবার সেই এরর পেজটিই দেখতে পাবেন!
+  - **ফিক্স:** শুধুমাত্র `response.status === 200` হলেই ক্যাশ করতে হবে।
+- **ফলব্যাক লজিকের ভুল:** ৭৭ নম্বর লাইনে `caches.match('/') || caches.match('/index.html')` লেখা। জাভাস্ক্রিপ্টে `Promise` সবসময় সত্য (truthy)। ফলে পেছনের কোডটি কখনোই রান করে না।
 
 #### ⚠️ Performance & Speed Issues:
-- `cache: 'reload'` on installation fetches all 30 assets simultaneously without throttling, congesting mobile bandwidth.
+- ইন্সটলের সময় একসাথে ৩০টি বড় ফাইল নেটওয়ার্ক জ্যাম করে রিলোড করে।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- N/A.
+- প্রযোজ্য নয়।
 
 #### 🟠 Logic Flaws & Improvements:
-- Versioning is hardcoded to `v63`. Updating assets requires manually incrementing cache version strings.
+- ভার্সন নেম `v63` হার্ডকোডেড। কোড পরিবর্তন করলে নিজে মনে করে ভার্সন না বাড়ালে ইউজাররা পুরনো কোডই পেতে থাকবে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Correct line 23 to `/vote/ui.js`.
-- Add status validation before caching:
+- ২৩ নম্বর লাইনে `/vote/ui.js` ঠিক করুন এবং এরর কোড যেন কখনোই ক্যাশে সেভ না হয় সেই গার্ড দিন:
   ```javascript
   if (response.ok && response.status === 200) {
       const resClone = response.clone();
@@ -521,42 +461,29 @@ HavenCraft-main represents a rich, feature-packed static website with serverless
 
 ---
 
-## Module 4: Dynamic Features & Interactive Modules
+## মডিউল ৪: ডায়নামিক ফিচারসমূহ
 
-### 1. `profile/ranks.js` & `assets/js/profile.js`
+---
+
+### ১. `profile/ranks.js` ও `assets/js/profile.js`
+
 #### 🔴 Security & Critical Bugs:
-- **Client-Side Staff Rank Spoofing:** `profile/ranks.js` defines `STAFF_RANKS` in plain client-side JavaScript. Any player can open DevTools and type `window.STAFF_RANKS['their_name'] = 'Owner'`. When they click "Save as Image" (`html2canvas`), the site exports an official-looking badge claiming they are the server Owner, which can be used to scam players on Discord or Facebook.
-- **html2canvas Canvas Tainting & Crash:** Lines 206–217 load `https://mc-heads.net/body/...`. If `mc-heads.net` has a CORS header hiccup, `html2canvas` throws `SecurityError: The operation is insecure`, completely breaking profile export.
+- **স্টাফ র‍্যাঙ্ক নকল করার সুযোগ (Client-Side Rank Spoofing):** `ranks.js`-এ স্টাফদের নাম ওপেন জাভাস্ক্রিপ্টে লেখা। যে কেউ ব্রাউজার কনসোলে `window.STAFF_RANKS['নিজের_নাম'] = 'Owner'` লিখে দিয়ে "Save as Image" বাটন চাপলে তার নামের পাশে অফিশিয়াল "Owner" ব্যাজ সহ প্রোফাইল কার্ড ডাউনলোড হয়ে যাবে। এটি দিয়ে ফেসবুক বা ডিসকর্ডে সাধারণ প্লেয়ারদের সাথে প্রতারণা করা সম্ভব।
+- **html2canvas ক্র্যাশ (Canvas Taint Bug):** ২১০ নম্বর লাইনে `mc-heads.net` থেকে বডি ইমেজ লোড হয়। কোনো কারণে ইমেজ সার্ভারের CORS রেসপন্স ফেইল করলে পুরো ইমেজ জেনারেশন ক্র্যাশ করে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Massive 7-Query N+1 Cascade for Ranks:** Lines 391–421 execute 7 separate count queries in parallel every time a profile loads:
-  ```javascript
-  const stats = ['playtime_sec', 'kills', 'deaths', 'money', 'block_place', 'block_break', 'mobs_killed'];
-  const rankPromises = stats.map(async (col) => {
-      const { count } = await window.supabaseLeaderboard
-          .from('player_stats')
-          .select('*', { count: 'exact', head: true })
-          .gt(col, statsData[col]);
-  ```
-  Running 7 database counting queries on every single profile page load strains Supabase database connections and slows down mobile rendering.
-- **Unbounded Vote Query:** Lines 444–449 query `votes` with **NO `.limit()`**:
-  ```javascript
-  const { data: voteData } = await window.supabaseVote
-      .from('votes')
-      .select('site, created_at')
-      .ilike('username', username)
-  ```
-  If a dedicated player has voted 5,000 times, the browser downloads all 5,000 rows just to read `voteData.length`!
+- **৭টি কুয়েরির N+1 সাইকেল:** ৩৯১–৪২১ নম্বর লাইনে প্রতিটি প্রোফাইল লোড হওয়ার সময় ৭টি আলাদা আলাদা কুয়েরি চালিয়ে ডাটাবেসে প্লেয়ারের র‍্যাঙ্ক চেক করা হয়। এতে ডাটাবেসের ওপর প্রচুর চাপ পড়ে এবং পেজ লোড হতে অনেক দেরি হয়।
+- **ভোটের ডাটা আনলিমিটেড ডাউনলোড:** ৪৪৪–৪৪৯ নম্বর লাইনে কোনো `.limit()` নেই। কোনো প্লেয়ারের ৫,০০০ ভোট থাকলে সব রো ব্রাউজারে চলে আসে কেবল মোট সংখ্যা দেখার জন্য!
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Dead Code & Missing Feature (Vote Cooldowns Disappeared):** Lines 451–460 calculate `votesBySite` and `getVoteSites()`, but **nowhere in `profile/index.html` or `profile.js` are vote cooldowns rendered!** The code spends CPU calculating it and then discards it.
-- Profile stats grid wraps poorly on narrow devices (320px–375px), causing rank badges to overlap stat values.
+- **হারিয়ে যাওয়া ফিচার:** ৪৫০ লাইনের পর `votesBySite` হিসাব করা হচ্ছে, কিন্তু প্রোফাইল পেজে ভোট কুলডাউন দেখানোর কোনো এইচটিএমএল বক্সই নেই! কোড রান হচ্ছে কিন্তু স্ক্রিনে কিছুই দেখাচ্ছে না।
+- ৩২০–৩৭৫ পিক্সেলের ছোট মোবাইলে র‍্যাঙ্ক ব্যাজ লেখার ওপরে উঠে যায়।
 
 #### 🟠 Logic Flaws & Improvements:
-- Division by zero risk in Kill/Death ratio: Line 357 sets `deaths = Number(statsData.deaths) || 1;`. If player has 0 kills and 0 deaths, ratio shows `0.00`, but if 5 kills and 0 deaths, ratio calculates against 1 (`5.00`). A proper Minecraft K/D standard handles 0 deaths as `kills` (e.g. `5.00*`).
+- প্লেয়ারের কিল ০ এবং ডেথ ০ হলে K/D রেশিও ০.০০ দেখায়, কিন্তু কিল ৫ এবং ডেথ ০ হলে ৫.০০ দেখায়। এটি স্ট্যান্ডার্ড মাইনক্রাফট ফরম্যাটে হ্যান্ডেল করা উচিত।
 
 #### 🚀 Modernization & UX Suggestions:
-- For vote counting, query `{ count: 'exact', head: true }` rather than fetching all rows:
+- সব ভোট রো ডাউনলোড না করে শুধুমাত্র কাউন্ট কুয়েরি করুন:
   ```javascript
   const { count } = await window.supabaseVote
       .from('votes')
@@ -566,265 +493,244 @@ HavenCraft-main represents a rich, feature-packed static website with serverless
 
 ---
 
-### 2. `assets/js/full-leaderboard.js` & `assets/js/leaderboard.js`
+### ২. `assets/js/full-leaderboard.js` ও `assets/js/leaderboard.js`
+
 #### 🔴 Security & Critical Bugs:
-- **SQL Wildcard Injection:** `full-leaderboard.js` line 130 uses unescaped `searchQuery` in `.ilike('username', `%${searchQuery}%`)`.
+- সার্চ বক্সে `%` বা `_` দিলে এসকিউএল ওয়াইল্ডকার্ড ইনজেকশন হয়।
 
 #### ⚠️ Performance & Speed Issues:
-- **Sequential 8-Query Waterfall in `fetchTopSummaries()`:** Lines 328–375 in `full-leaderboard.js`:
-  ```javascript
-  const summaryCats = ['playtime', 'money', 'shards', 'mobs_killed', 'kills', 'deaths', 'block_place', 'block_break'];
-  for (let idx = 0; idx < summaryCats.length; idx++) {
-      const { data } = await supabase.from('player_stats').select(...).limit(1);
-  }
-  ```
-  It awaits query 1, then waits for query 2, then query 3... up to query 8! This takes 2.5–3.0 seconds on mobile.
-  - **Fix:** Run with `Promise.all(summaryCats.map(...))` to execute in parallel, reducing load time to ~300ms!
+- **৮টি কুয়েরির অলস সিরিয়াল লুপ:** `full-leaderboard.js`-এর ৩২৮–৩৭৫ নম্বর লাইনে:
+  `for (let idx = 0; idx < summaryCats.length; idx++) { await supabase... }`
+  একটি কুয়েরি শেষ হওয়ার পর আরেকটি শুরু হয়। এভাবে ৮টি কুয়েরি শেষ হতে প্রায় ২.৫–৩ সেকেন্ড সময় লাগে!
+  - **ফিক্স:** `Promise.all` ব্যবহার করে ৮টি কুয়েরি একসাথেই রান করা উচিত, এতে মাত্র ৩০০ মিলি সেকেন্ডে সব ডাটা চলে আসবে।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- Horizontal scrolling on category tabs: On small screens, `.lb-tabs` can overflow awkwardly without a visual fade indicator showing that more tabs exist to the right.
+- মোবাইলে ক্যাটাগরি ট্যাবগুলো ডানে স্ক্রল করা যায়, কিন্তু কোনো শ্যাডো বা অ্যারো না থাকায় ইউজার বুঝতে পারেন না যে আরও ট্যাব রয়েছে।
 
 #### 🟠 Logic Flaws & Improvements:
-- Code duplication between `leaderboard.js` (homepage widget) and `full-leaderboard.js` (dedicated page). Both define identical number formatters and category objects.
+- হোমপেজের `leaderboard.js` এবং মেইন পেজের `full-leaderboard.js`-এ একই কোড দুইবার ডুপ্লিকেট করা।
 
 #### 🚀 Modernization & UX Suggestions:
-- Replace the sequential summary loop with `Promise.all`:
+- `Promise.all` দিয়ে কুয়েরি দ্রুত করুন:
   ```javascript
   await Promise.all(summaryCats.map(async (cat) => { ... }));
   ```
 
 ---
 
-### 3. `assets/js/gallery.js` & `assets/js/upload.js`
+### ৩. `assets/js/gallery.js` ও `assets/js/upload.js`
+
 #### 🔴 Security & Critical Bugs:
-- **P0 Storage Vulnerability (Unauthenticated Storage Upload):**
-  Look at `assets/js/upload.js` lines 244–272:
-  1. Client calls `supabaseClient.storage.from('gallery').upload(...)` using the public ANON key.
-  2. Image is saved permanently in Supabase storage bucket.
-  3. Client then calls `/api/submit-gallery` with passcode.
-  4. If passcode is WRONG or INVALID, API returns 401 error.
-  **BUT THE IMAGE IS ALREADY SAVED IN STORAGE!**
-  Anyone can upload unlimited gigabytes of junk, spam, or illicit files directly to Supabase storage without a passcode, because uploads happen client-side before verification!
-  - **Remediation:** Remove public upload permissions on the Supabase storage bucket. Upload must occur server-side through `/api/submit-gallery` using the service role key *after* passcode verification.
+- **P0 স্টোরেজ ভলনারেবিলিটি (পাসকোডের আগেই ছবি আপলোড):** `upload.js` ফাইলের ২৪৪–২৭২ নম্বর লাইনে:
+  ১. ইউজার ছবি সিলেক্ট করে পাসকোড লিখে "Submit" চাপে।
+  ২. ক্লায়েন্ট ব্রাউজার সুপাবেসের পাবলিক কি দিয়ে ছবিটি সরাসরি স্টোরেজে আপলোড করে দেয়।
+  ৩. ছবি আপলোড শেষ হওয়ার পর সার্ভারলেস এপিআইতে পাসকোড চেক করার জন্য রিকোয়েস্ট পাঠানো হয়।
+  ৪. পাসকোড যদি **ভুলও হয়**, এপিআই এরর দেয়, কিন্তু **ছবিটি ইতিমধ্যেই সুপাবেস ক্লাউড স্টোরেজে পার্মানেন্টলি সেভ হয়ে গেছে!**
+  যে কেউ পাসকোড ছাড়াই হাজার হাজার আজেবাজে ছবি আপনার ক্লাউড স্টোরেজে আপলোড করে স্টোরেজ ভর্তি করে দিতে পারবে!
+  - **সমাধান:** সুপাবেস স্টোরেজ বাকেটে পাবলিক আপলোড পারমিশন বন্ধ করুন। ছবি আপলোড হতে হবে সার্ভারলেস এপিআইয়ের ভেতর দিয়ে, পাসকোড সঠিক হলে তবেই।
 
 #### ⚠️ Performance & Speed Issues:
-- **Event Listener Leak in Gallery Pagination:** Lines 272–284 in `gallery.js`:
-  Every time "Load More" is clicked, `initDynamicLightbox()` runs:
-  ```javascript
-  document.querySelectorAll('.gallery-item').forEach(item => {
-      item.addEventListener('click', () => { ... });
-  });
-  ```
-  It DOES NOT remove previous click listeners! If the user loads 5 pages, the first 6 items have **5 duplicate click listeners** attached to each card!
+- **ইভেন্ট লিসেনারের মেমরি লিক:** `gallery.js`-এর ২৭২–২৮৪ লাইনে প্রতিবার "Load More" চাপলে আগের ছবিগুলোতে আবার নতুন করে ক্লিক লিসেনার যুক্ত হয়। ৫ বার চাপলে প্রথম ছবিগুলোতে ৫ বার করে ক্লিক ইভেন্ট ফায়ার হবে!
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- Lightbox cannot be closed using the keyboard `Escape` key.
-- Lightbox has no focus management or ARIA modal attributes (`role="dialog"`, `aria-modal="true"`).
+- লাইটবক্স ওপেন হলে কিবোর্ডের `Escape` বাটন চাপলে লাইটবক্স বন্ধ হয় না। কোনো অ্যাক্সেসিবিলিটি নেই।
 
 #### 🟠 Logic Flaws & Improvements:
-- `convertToWebP` in `upload.js` converts images via Canvas. If a user uploads an animated GIF, Canvas conversion flattens it into a static single frame WebP.
+- `convertToWebP` ফাংশন অ্যানিমেটেড জিআইএফ (GIF) আপলোড করলে সেটিকে একটি মাত্র ফ্রেমের স্ট্যাটিক ফাইলে পরিণত করে।
 
 #### 🚀 Modernization & UX Suggestions:
-- Delegate lightbox click handling to the parent `#dynamicGalleryGrid` once using event delegation (`e.target.closest('.gallery-item')`) to prevent memory leaks and stacked listeners.
+- গ্যালারির প্যারেন্ট গ্রিডে একটি মাত্র ইভেন্ট ডেলিগেশন লিসেনার দিন (`e.target.closest('.gallery-item')`), যাতে বারবার লুপ না চালাতে হয়।
 
 ---
 
-### 4. `assets/js/contact.js`
+### ৪. `assets/js/contact.js`
+
 #### 🔴 Security & Critical Bugs:
-- No CSRF protection or rate limiting.
+- রেট লিমিটিং নেই।
 
 #### ⚠️ Performance & Speed Issues:
-- Minimal impact.
+- কোনো সমস্যা নেই।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Disappearing Contact Section (Poor UX Feedback):** Lines 41–44:
-  ```javascript
-  contactSection.style.display = 'none';
-  ```
-  When the form submits successfully, it displays a toast for 3 seconds and completely hides the contact form section. After 3 seconds, the user is left looking at an empty gap on the page with zero persistent confirmation!
-  - **Fix:** Replace form with a success card: "Thank you! Your message has been received. Our team will get back to you via email."
+- **মেসেজ পাঠানোর পর পেজ ফাঁকা হয়ে যাওয়া:** ৪১–৪৪ নম্বর লাইনে মেসেজ সফলভাবে চলে গেলে ফর্মটি সাথে সাথে হাইড (`display: none`) হয়ে যায়। মাত্র ৩ সেকেন্ড একটি টোস্ট থাকে, তারপর পুরো জায়গাটি একদম ফাঁকা সাদা হয়ে থাকে। ইউজার বুঝতে পারেন না মেসেজ গেছে নাকি হারিয়ে গেছে।
+  - **ফিক্স:** ফর্মের জায়গায় একটি সুন্দর কনফার্মেশন কার্ড দেখান: "ধন্যবাদ! আপনার মেসেজটি আমরা পেয়েছি। খুব শীঘ্রই আমরা আপনার ইমেইলে রিপ্লাই দেব।"
 
 #### 🟠 Logic Flaws & Improvements:
-- If the network fails, `data.error` is masked behind a generic toast message.
+- নেটওয়ার্ক এরর হলে জেনেরিক মেসেজ না দেখিয়ে স্পেসিফিক মেসেজ দেখানো ভালো।
 
 #### 🚀 Modernization & UX Suggestions:
-- Add a dedicated success card container `<div id="contactSuccessCard">`.
+- একটি সুন্দর সাকসেস স্টেট কার্ড যুক্ত করুন।
 
 ---
 
-## Module 5: HTML Architecture, SEO & Accessibility (a11y)
-
-### 1. `discord/index.html`
-#### 🔴 Security & Critical Bugs:
-- **P0 DOM-Based XSS Vulnerability:** Lines 473 & 455:
-  ```javascript
-  membersHTML += `
-      <div class="discord-member-card">
-          ...
-          <div class="discord-member-name">${member.username}</div>
-          <span>${activityType} ${member.game.name}</span>
-      </div>
-  `;
-  ```
-  `member.username` and `member.game.name` are fetched from Discord's widget API (`https://discord.com/api/guilds/.../widget.json`). Any member or bot in the HavenCraft Discord can set their server nickname or custom game activity to `<img src=x onerror=alert(document.cookie)>` or `<script>`.
-  When rendered via `.innerHTML`, arbitrary JavaScript executes in the victim's browser!
-  - **Fix:** Wrap with `escapeHtml(member.username)` and `escapeHtml(member.game.name)`.
-
-#### ⚠️ Performance & Speed Issues:
-- Discord widget API is called every time without client-side caching. If Discord widget rate limits (429 Too Many Requests), widget permanently enters error state.
-
-#### 🎨 UI/UX, SEO & Responsiveness:
-- Discord member grid breaks on screens smaller than 340px due to fixed minimum column widths.
-
-#### 🟠 Logic Flaws & Improvements:
-- `copyInviteLink()` does not verify if `navigator.clipboard` is supported in older mobile browsers.
-
-#### 🚀 Modernization & UX Suggestions:
-- Sanitize Discord member names immediately before HTML concatenation.
+## মডিউল ৫: এইচটিএমএল পেজ, এসইও ও অ্যাক্সেসিবিলিটি
 
 ---
 
-### 2. `index.html` (Homepage)
+### ১. `discord/index.html`
+
 #### 🔴 Security & Critical Bugs:
-- Script execution order race condition: `assets/js/utils.js` is loaded at line 641 before `core.js` at line 647. When `utils.js` evaluates `window.SERVER_CONFIG?.ip`, `SERVER_CONFIG` in `core.js` has not executed yet!
+- **P0 ক্রস-সাইট স্ক্রিপ্টিং (DOM-based XSS Vulnerability):** ৪৭৩ ও ৪৫৫ নম্বর লাইনে:
+  `membersHTML += `<div class="discord-member-name">${member.username}</div>`;`
+  ডিসকর্ডের কোনো মেম্বার বা বট যদি তার ডিসকর্ড ইউজারনেম বা গেমের স্ট্যাটাসে `<script>` বা `<img src=x onerror=alert(1)>` লিখে রাখে, তবে এই পেজে ঢোকার সাথে সাথে যে কোনো সাধারণ ভিজিটরের ব্রাউজারে সেই ক্ষতিকর কোড এক্সিকিউট হয়ে যাবে!
+  - **ফিক্স:** `member.username` এবং `member.game.name` এইচটিএমএল-এ বসানোর আগে অবশ্যই `escapeHtml()` দিয়ে স্যানিটাইজ করতে হবে।
 
 #### ⚠️ Performance & Speed Issues:
-- **Intro Splash Screen Delay:** `hc-intro-overlay` covers the entire screen by default. If JavaScript execution is delayed on low-end Android devices, the user stares at a logo for several seconds.
-- Non-critical CSS loading uses `media="print" onload="this.media='all'"`. While effective for Lighthouse scores, if JavaScript is disabled, the `<noscript>` tags contain duplicate styles.
+- ডিসকর্ড উইজেট এপিআইতে কোনো ক্যাশিং নেই। বারবার পেজ রিফ্রেশ করলে ডিসকর্ড এপিআই রেট লিমিট (429 Too Many Requests) করে দেয়।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Duplicate Headings & Semantic Hierarchy:** Multiple `<h2>` tags without logical section parenting.
-- **Accessibility:** `openPlayerModal()` is triggered via `onclick` on `div.hero-stat-card`. While `role="button"` and `tabindex="0"` are present, `aria-haspopup="dialog"` is missing.
+- মেম্বার গ্রিড ৩৪০ পিক্সেলের ছোট মোবাইলে স্ক্রিনের বাইরে চলে যায়।
 
 #### 🟠 Logic Flaws & Improvements:
-- Google Analytics is loaded on `index.html` but **missing on `/vote/`, `/leaderboard/`, `/store/`, `/profile/`, and `/gallery/`**! Analytics traffic drops completely whenever users leave the homepage!
+- পুরোনো মোবাইলে ক্লিপবোর্ড কপি কাজ না করলে অল্টারনেটিভ দেওয়া উচিত।
 
 #### 🚀 Modernization & UX Suggestions:
-- Move Google Analytics into a shared component or include it globally in the `<head>` of all HTML pages.
-- Correct script execution order: `core.js` -> `utils.js` -> other scripts.
+- ডিসকর্ড মেম্বারদের নাম অবিলম্বে এস্কেপ করুন।
 
 ---
 
-### 3. `commands/index.html`
+### ২. `index.html` (হোমপেজ)
+
 #### 🔴 Security & Critical Bugs:
-- No critical vulnerabilities found. Translation dictionary is hardcoded and safe.
+- স্ক্রিপ্ট লোডিংয়ের রেস কন্ডিশন: ৬৪১ নম্বর লাইনে `utils.js` আগে লোড হচ্ছে এবং ৬৪৭ নম্বর লাইনে `core.js` পরে লোড হচ্ছে। ফলে `utils.js` যখন সার্ভার আইপি খোঁজে, তখন `core.js` এর ভেরিয়েবল রেডি থাকে না।
 
 #### ⚠️ Performance & Speed Issues:
-- Large static HTML file (34KB). Fast loading, no external API dependencies.
+- কালো ইন্ট্রো লোগোটি স্লো ইন্টারনেটে ১.৪ সেকেন্ড ধরে স্ক্রিন আটকে রাখে, যা গুগলের ফার্স্ট কনটেন্টফুল পেইন্ট (FCP) কমিয়ে দেয়।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Accordion Accessibility (a11y):** Accordion headers (`.wiki-header`) use `onclick="toggleWiki(this)"`. They lack `role="button"`, `tabindex="0"`, `aria-expanded="false"`, and keyboard activation (`Enter` / `Space`). Screen reader users and keyboard-only users cannot expand command sections!
+- **গুগল অ্যানালিটিক্স বাদ পড়া:** হোমপেজে গুগল অ্যানালিটিক্স ট্যাগ আছে, কিন্তু **`/vote/`, `/leaderboard/`, `/store/`, `/profile/` পেজে অ্যানালিটিক্স একেবারেই নেই!** ফলে ইউজার হোমপেজ থেকে অন্য পেজে গেলে গুগল অ্যানালিটিক্সে কোনো ট্রাফিক রেকর্ড হয় না।
 
 #### 🟠 Logic Flaws & Improvements:
-- Language switch (`setLang`) replaces `.innerHTML` with `translations[key][lang]`. If keys are missing, element text turns blank.
+- সার্ভার কার্ডের ওপর ক্লিক করলে প্লেয়ার লিস্ট মডাল খোলে, কিন্তু কিবোর্ড ইউজারদের জন্য কোনো `aria-haspopup="dialog"` নেই।
 
 #### 🚀 Modernization & UX Suggestions:
-- Add full ARIA attributes to wiki accordions:
-  ```html
-  <div class="wiki-header" role="button" tabindex="0" aria-expanded="false">
-  ```
+- প্রতিটি পেজের হেডার বা ফুটারে গুগল অ্যানালিটিক্স যুক্ত করুন।
+- স্ক্রিপ্টের সিরিয়াল ঠিক করুন: আগে `core.js`, তারপর `utils.js`।
 
 ---
 
-### 4. `store/index.html` & `staff/index.html`
+### ৩. `commands/index.html`
+
 #### 🔴 Security & Critical Bugs:
-- No critical security bugs.
+- কোনো সিকিউরিটি সমস্যা নেই।
 
 #### ⚠️ Performance & Speed Issues:
-- `staff/index.html` uses `skinview3d.SkinViewer` inside a modal. If users open and close staff cards rapidly, previous `SkinViewer` instances must be strictly disposed of (`modalSkinViewer.dispose()`) to prevent WebGL context leaks in mobile Safari / Chrome.
+- পেজটি স্ট্যাটিক হওয়ায় খুব ফাস্ট লোড হয়।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- In `store/index.html`, ranks use Bengali currency symbol (`৳220`), but commands and descriptions are entirely in English. Adding a toggle for international prices ($ USD) would expand donor reach.
-- "Buy via Ticket" links directly to Discord without pre-filling rank selection or ticket category.
+- **কিবোর্ড দিয়ে উইকি খোলা যায় না (a11y issue):** কমান্ড সেকশনের হেডারগুলোতে শুধুমাত্র `onclick` আছে। কোনো `tabindex="0"` বা `aria-expanded` নেই। যারা কিবোর্ড দিয়ে ব্রাউজ করেন তারা এন্টার বা স্পেস চেপে কমান্ডগুলো দেখতে পারেন না।
 
 #### 🟠 Logic Flaws & Improvements:
-- N/A.
+- ভাষা পরিবর্তন করলে কিছু লেখার সাইজ ফ্লেক্সিবল না হওয়ায় সামান্য লাফ দেয়।
 
 #### 🚀 Modernization & UX Suggestions:
-- Add a direct Discord URL with query parameters or copy-to-clipboard command for rank purchase tickets.
+- উইকি হেডারে `role="button"` এবং কিবোর্ড ইভেন্ট সাপোর্ট যোগ করুন।
 
 ---
 
-## Module 6: CSS Architecture, Design System & Responsiveness
+### ৪. `store/index.html` ও `staff/index.html`
 
-### 1. `assets/css/style.css` (84KB, 4,107 Lines)
 #### 🔴 Security & Critical Bugs:
-- No security bugs in CSS.
+- কোনো সিকিউরিটি ঝুঁকি নেই।
 
 #### ⚠️ Performance & Speed Issues:
-- **Monolithic CSS File Size:** 84KB unminified CSS is loaded synchronously on the critical rendering path (`index.html` line 58). This blocks First Contentful Paint (FCP) by ~300ms on mobile connections.
-- **Scattered Media Queries:** Over 15 different `@media` blocks are scattered unpredictably throughout the file (lines 845, 1055, 1590, 1831, 1975, 2515, 2921, 3366, 3373, 3682, 3787, 3817, 3976, 3983). This violates CSS architecture best practices, prevents CSS compression optimization, and makes debugging responsive issues a nightmare.
-- **Duplicated & Overriding Selectors:** Multiple instances of `.nav-action-btn`, `.hero-stat-card`, and `.server-ip` definitions overriding each other with `!important` (e.g. line 3800: `color: #ffffff !important;`).
+- স্টাফ পেজে ৩ডি স্কিন ভিউয়ার বারবার খোলা ও বন্ধ করলে মেমরি থেকে WebGL কনটেক্সট সঠিকভাবে রিলিজ না করলে মোবাইল ব্রাউজার স্লো হয়ে যায়।
 
 #### 🎨 UI/UX, SEO & Responsiveness:
-- **Mobile Touch Targets < 48px:** Several buttons (`.search-clear`, `.page-btn`, `.cmd-tag`) have touch targets smaller than $48 \times 48\text{px}$, failing Google Mobile Usability audits.
-- **Horizontal Scroll on 320px Devices:** The hero stats grid on screens under 360px width causes subtle horizontal micro-scrolling due to `padding: 24px 16px` combined with fixed gaps.
+- স্টোর পেজে বিডিটি টাকা (`৳২২০`) লেখা, কিন্তু কোনো আন্তর্জাতিক ডলার ($ USD) কনভার্টার নেই, যা প্রবাসী প্লেয়ারদের জন্য সহায়ক হতো।
+- "Buy via Ticket" বাটনে ক্লিক করলে সরাসরি ডিসকর্ডে যায়, কিন্তু কোনো প্রি-ফিল করা টিকেট টেক্সট থাকে না।
 
 #### 🟠 Logic Flaws & Improvements:
-- `--online-glow` and `--transition` are declared in `:root`, but several components hardcode `cubic-bezier(0.16, 1, 0.3, 1)` and `rgba(...)` instead of reusing design tokens.
+- প্রযোজ্য নয়।
 
 #### 🚀 Modernization & UX Suggestions:
-- Reorganize CSS using a modular structure:
-  - `tokens.css` (variables, colors, typography)
-  - `components.css` (buttons, cards, inputs, modals)
-  - `layout.css` (grid, navbar, footer)
-- Consolidate all `@media` breakpoints into standardized tokens:
-  - Mobile: `@media (max-width: 640px)`
-  - Tablet: `@media (max-width: 1024px)`
-  - Desktop: `@media (min-width: 1025px)`
+- স্টোরে কারেন্সি সুইচার ($ এবং ৳) যোগ করুন।
 
 ---
 
-## Module 7: Build Automation, DevOps & Tooling
-
-### 1. `build.js`
-#### 🔴 Security & Critical Bugs:
-- **Dangerous Regular Expression Minification:** Line 64:
-  ```javascript
-  .replace(/(?<![:\/'"])\/\/(?![\/'"])[^\n]*/g, '')
-  ```
-  Minifying JavaScript using regex instead of an AST parser (like `esbuild` or `terser`) is **extremely hazardous**. It can corrupt regex literals (such as `/[a-zA-Z0-9_. *+-]/`), strip valid code inside template strings containing `//`, or produce invalid syntax tokens.
-
-#### ⚠️ Performance & Speed Issues:
-- **Orphaned Build Output (`dist/` is Never Used):** `build.js` bundles files into `dist/assets/js/bundle.min.js` and minifies CSS into `dist/assets/css/`. **However, not a single HTML page in the entire repository loads from `dist/`!** All HTML files still point to raw unminified files in `assets/`. The build script is running as a disconnected artifact.
-
-#### 🎨 UI/UX, SEO & Responsiveness:
-- N/A.
-
-#### 🟠 Logic Flaws & Improvements:
-- `build.js` requires manual CLI execution (`node build.js`). It is not tied to a `package.json` build step or Vercel deployment hook.
-
-#### 🚀 Modernization & UX Suggestions:
-- Adopt a standard zero-config modern bundler like `esbuild` or `Vite`, or update `vercel.json` build command to output directly to the production directory.
+## মডিউল ৬: সিএসএস ও রেসপন্সিভ ডিজাইন
 
 ---
 
-## Priority Remediation Matrix
+### ১. `assets/css/style.css` (৮৪ কিলোবাইট, ৪,১০৭ লাইন)
 
-Below is the prioritized roadmap to achieve **99.99% flawless production stability**:
+#### 🔴 Security & Critical Bugs:
+- কোনো সিকিউরিটি সমস্যা নেই।
+
+#### ⚠️ Performance & Speed Issues:
+- **অতিরিক্ত ভারী মেইন সিএসএস:** ৮৪ কিলোবাইটের সিএসএস প্রথম পেজ লোডের সময় ব্রাউজারকে রেন্ডার ব্লক করে রাখে।
+- **বিক্ষিপ্ত মিডিয়া কুয়েরি (Scattered Media Queries):** ফাইলের ভেতরে প্রায় ১৫টি ভিন্ন ভিন্ন জায়গায় `@media` কুয়েরি ছড়ানো-ছিটানো (লাইন ৮৪৫, ১০৫৫, ১৫৯০, ১৮৩১, ১৯৭৫, ২৫১৫, ২৯২১, ৩৩৬৬, ৩৩৭৩, ৩৬৮২, ৩৭৮৭, ৩৮১৭, ৩৯৭৬, ৩৯৮৩)। এটি ক্লিন কোড এবং সিএসএস আর্কিটেকচারের পরিপন্থী।
+- **`!important`-এর অপ্রয়োজনীয় ব্যবহার:** বিভিন্ন জায়গায় ক্লাস ওভাররাইড করতে গিয়ে `!important` ব্যবহার করা হয়েছে, যা সিএসএস স্পেসিফিসিটি নষ্ট করে।
+
+#### 🎨 UI/UX, SEO & Responsiveness:
+- **মোবাইলে ছোট টাচ টার্গেট (< 48px):** সার্চ ক্লিয়ার বাটন, পেজিনেশন বাটন এবং কিছু ট্যাগের সাইজ ৪৮ পিক্সেলের চেয়ে ছোট হওয়ায় মোবাইলে আঙুল দিয়ে চাপতে অসুবিধা হয়।
+- **৩২০ পিক্সেল স্ক্রিনে হরিজন্টাল স্ক্রল:** খুব ছোট স্ক্রিনের মোবাইলে হিরো স্ট্যাটাস গ্রিডের প্যাডিংয়ের কারণে সামান্য ডানে-বামে নড়াচড়া করে।
+
+#### 🟠 Logic Flaws & Improvements:
+- কিছু জায়গায় ভেরিয়েবল ব্যবহার না করে সরাসরি কালার কোড লেখা হয়েছে।
+
+#### 🚀 Modernization & UX Suggestions:
+- সিএসএস ফাইলটিকে মডুলার করুন এবং মিডিয়া কুয়েরিগুলোকে স্ট্যান্ডার্ড ৩টি ব্রেকপয়েন্টে এক জায়গায় নিয়ে আসুন:
+  - মোবাইল: `@media (max-width: 640px)`
+  - ট্যাবলেট: `@media (max-width: 1024px)`
+  - ডেস্কটপ: `@media (min-width: 1025px)`
+
+---
+
+## মডিউল ৭: বিল্ড স্ক্রিপ্ট ও অটোমেশন
+
+---
+
+### ১. `build.js`
+
+#### 🔴 Security & Critical Bugs:
+- **বিপজ্জনক রেজেক্স মিনিফিকেশন:** ৬৪ নম্বর লাইনে রেগুলার এক্সপ্রেশন দিয়ে জাভাস্ক্রিপ্ট কোড ছোট করার চেষ্টা করা হয়েছে:
+  `.replace(/(?<![:\/'"])\/\/(?![\/'"])[^\n]*/g, '')`
+  রেজেক্স দিয়ে জাভাস্ক্রিপ্ট মিনিফাই করা অত্যন্ত বিপজ্জনক। এটি কোডের আসল রেজেক্স (যেমন ইউজারনেম রেজেক্স) অথবা কোনো স্ট্রিংয়ের ভেতরে থাকা `//` মুছে দিয়ে সম্পূর্ণ জাভাস্ক্রিপ্ট নষ্ট বা সিনট্যাক্স এরর তৈরি করতে পারে!
+  - **সমাধান:** মিনিফাই করতে চাইলে `esbuild` বা `terser` ব্যবহার করতে হবে।
+
+#### ⚠️ Performance & Speed Issues:
+- **অব্যবহৃত আউটপুট (`dist/` ফোল্ডার কোনো কাজেই আসছে না):** `build.js` ফাইলটি রান করলে `dist/` ফোল্ডারে `bundle.min.js` তৈরি হয়। কিন্তু **প্রজেক্টের কোনো একটি এইচটিএমএল ফাইলেও এই `dist/` বা `bundle.min.js` লিঙ্ক করা নেই!** ফলে বিল্ড স্ক্রিপ্ট চালানো বা না চালানো সমান কথা।
+
+#### 🎨 UI/UX, SEO & Responsiveness:
+- প্রযোজ্য নয়।
+
+#### 🟠 Logic Flaws & Improvements:
+- স্বয়ংক্রিয় কোনো গিটহুক বা ভার্সেল বিল্ড স্টেপের সাথে এটি যুক্ত নয়।
+
+#### 🚀 Modernization & UX Suggestions:
+- আধুনিক জিরো-কনফিগ টুলস (যেমন Vite বা esbuild) ব্যবহার করুন।
+
+---
+
+## ধাপে ধাপে সমাধান করার রোডম্যাপ
+
+আপনার ওয়েবসাইটটিকে **৯৯.৯৯% নিখুঁত ও হ্যাকিংমুক্ত** করতে নিচের অগ্রাধিকার অনুযায়ী সমাধান করুন:
 
 ```mermaid
 graph TD
-    P0[P0: Critical Security & Crash Fixes] --> P1[P1: Core Logic & Performance]
-    P1 --> P2[P2: Accessibility, SEO & Responsiveness]
-    P2 --> P3[P3: Modernization & Architecture]
+    P0[P0: অতি জরুরি সিকিউরিটি ও ক্র্যাশ ফিক্স] --> P1[P1: কোর লজিক ও পারফরম্যান্স ফিক্স]
+    P1 --> P2[P2: অ্যাক্সেসিবিলিটি ও মোবাইল ইউআই ফিক্স]
+    P2 --> P3[P3: আধুনিকীকরণ ও কোড ক্লিনআপ]
 
-    P0 --> S1[Revoke & Remove Supabase Service Role Secret in migrate-webp.js]
-    P0 --> S2[Block Client Storage Uploads before Passcode in upload.js]
-    P0 --> S3[Escape Discord Widget Data in discord/index.html to Prevent XSS]
-    P0 --> S4[Fix Service Worker 404 Caching and Case Sensitivity in sw.js]
+    P0 --> S1[migrate-webp.js থেকে সুপাবেস মাস্টার কি মুছে ফেলুন ও রিসেট দিন]
+    P0 --> S2[upload.js-এ পাসকোড চেক করার আগে ক্লায়েন্ট আপলোড বন্ধ করুন]
+    P0 --> S3[discord/index.html-এ মেম্বারদের নাম এস্কেপ করে XSS বন্ধ করুন]
+    P0 --> S4[sw.js ফাইলে /vote/ui.js এর নাম ঠিক করুন এবং এরর ক্যাশ বন্ধ করুন]
 
-    P1 --> L1[Support Bedrock 24-char Gametags in core.js & vote inputs]
-    P1 --> L2[Replace 5000-Row Client Fetch with Supabase RPC Aggregate]
-    P1 --> L3[Fix Sequential 8-Query Waterfall in full-leaderboard.js]
+    P1 --> L1[core.js এবং ইনপুটগুলোতে বেডরক প্লেয়ারদের ২৪ অক্ষর সাপোর্ট দিন]
+    P1 --> L2[ভোট পেজে ৫০০০ রো ডাউনলোডের বদলে সুপাবেস RPC কুয়েরি করুন]
+    P1 --> L3[full-leaderboard.js-এ ৮টি কুয়েরি Promise.all দিয়ে প্যারালাল করুন]
 
-    P2 --> A1[Add Full ARIA & Focus Trap in navbar.js and commands.js]
-    P2 --> A2[Consolidate CSS Breakpoints & Eliminate 320px Horizontal Scroll]
+    P2 --> A1[সব বাটনে ARIA লেবেল ও কিবোর্ড ফোকাস ট্র্যাপ যুক্ত করুন]
+    P2 --> A2[সব পেজে গুগল অ্যানালিটিক্স যুক্ত করুন এবং সিএসএস ফিক্স করুন]
 ```
 
-### Urgent Action Checklist (Next Steps):
-1. **Immediate Secret Rotation:** Log into the Supabase dashboard for `rbrrkphtobxcmnzshnqj` and rotate the `service_role` secret immediately. Remove the hardcoded token from `scripts/migrate-webp.js`.
-2. **Close Storage Upload Hole:** Revoke public upload policies on the Supabase `gallery` bucket. Move storage uploads into the `/api/submit-gallery` serverless route.
-3. **Patch Discord XSS:** Sanitize `member.username` and `member.game.name` before HTML rendering in `discord/index.html`.
-4. **Fix Service Worker:** Rename `/vote/UI.js` to `/vote/ui.js` and add `response.ok && response.status === 200` guards in `sw.js`.
-5. **Support Bedrock Users:** Increase `maxlength="16"` to `maxlength="24"` across all inputs and allow Floodgate prefixes in `core.js` login.
+---
+
+### 🚨 আজই যে ৫টি কাজ করা আবশ্যক:
+1. **সুপাবেস মাস্টার কি রিসেট:** `scripts/migrate-webp.js` থেকে হার্ডকোডেড কি মুছে ফেলুন এবং সুপাবেস ড্যাশবোর্ড থেকে `service_role` সিক্রেট কি পরিবর্তন করুন।
+2. **স্টোরেজ আপলোড নিরাপত্তা:** ক্লায়েন্ট সাইড থেকে সরাসরি ছবি আপলোড বন্ধ করে সার্ভারলেস এপিআইয়ের মাধ্যমে পাসকোড চেক করে আপলোড করান।
+3. **ডিসকর্ড পেজে XSS বন্ধ:** `discord/index.html`-এর ৪৭৩ লাইনে ইউজারনেম এস্কেপ করুন।
+4. **সার্ভিস ওয়ার্কার ফিক্স:** `sw.js` ফাইলে বড় হাতের `UI.js` পরিবর্তন করে ছোট হাতের `ui.js` করুন এবং এরর রেসপন্স ক্যাশে সেভ হওয়া বন্ধ করুন।
+5. **বেডরক প্লেয়ারদের সমাধান:** `vote/index.html` এবং `core.js`-এ ইউজারনেম লিমিট ১৬ থেকে বাড়িয়ে ২৪ করুন।
