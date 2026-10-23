@@ -77,6 +77,10 @@ const client = new Client({
 // Set to deduplicate tickets closed via staff in Discord or already processed
 const handledClosedTickets = new Set();
 
+// Sets to track messages originating from Discord to prevent echoing back into Discord
+const discordOriginMessageKeys = new Set();
+const discordOriginMessageIds = new Set();
+
 // Helper: Close a Ticket (Triggered by Discord Staff)
 async function closeTicket(ticketId, channel, closedByName) {
     try {
@@ -677,8 +681,23 @@ function setupSupabaseRealtime() {
                 return;
             }
 
-            // C2. Only forward player messages to Discord
-            if (msg.sender !== 'player') return;
+            // C2. Prevent Discord echo loop:
+            // If this staff message was sent from Discord itself, skip forwarding to Discord!
+            if (msg.sender === 'staff') {
+                const dedupKey = `${msg.ticket_id}:${(msg.message || '').trim()}`;
+                const msgIdNum = Number(msg.id);
+                const msgIdStr = String(msg.id);
+
+                if (
+                    (msg.id && (discordOriginMessageIds.has(msgIdNum) || discordOriginMessageIds.has(msgIdStr))) ||
+                    discordOriginMessageKeys.has(dedupKey)
+                ) {
+                    return; // Already posted in Discord by staff
+                }
+            }
+
+            // Only forward player messages or dashboard staff messages (ignore system/status logs)
+            if (msg.sender !== 'player' && msg.sender !== 'staff') return;
 
             try {
                 const { data: ticket, error } = await supabase
@@ -689,52 +708,82 @@ function setupSupabaseRealtime() {
 
                 if (error || !ticket || !ticket.discord_thread_id) return;
 
-                // Deduplicate initial message: If this message matches initial ticket creation,
+                // Deduplicate initial message for player: If this message matches initial ticket creation,
                 // it is already displayed inside the embed.
-                const msgTime = new Date(msg.created_at).getTime();
-                const ticketTime = new Date(ticket.created_at).getTime();
-                if (Math.abs(msgTime - ticketTime) < 3000) {
-                    const { count } = await supabase
-                        .from('ticket_messages')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('ticket_id', msg.ticket_id);
-                    if (count === 1) {
-                        return; // Embed already has this message!
+                if (msg.sender === 'player') {
+                    const msgTime = new Date(msg.created_at).getTime();
+                    const ticketTime = new Date(ticket.created_at).getTime();
+                    if (Math.abs(msgTime - ticketTime) < 3000) {
+                        const { count } = await supabase
+                            .from('ticket_messages')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('ticket_id', msg.ticket_id);
+                        if (count === 1) {
+                            return; // Embed already has this message!
+                        }
                     }
                 }
 
                 const targetChannel = await client.channels.fetch(ticket.discord_thread_id).catch(() => null);
                 if (!targetChannel) return;
 
-                // If thread was archived, unarchive to receive player message
+                // If thread was archived, unarchive to receive incoming message
                 if (targetChannel.isThread && targetChannel.isThread() && targetChannel.archived) {
-                    await targetChannel.setArchived(false, 'Incoming player message').catch(() => {});
+                    await targetChannel.setArchived(false, `Incoming ${msg.sender} message`).catch(() => {});
                 }
 
-                // Extract image URLs (e.g. from Supabase storage or png/jpg/jpeg/webp/gif)
-                const imgRegex = /(https?:\/\/[^\s<>"'\)]+?\.(?:png|jpe?g|gif|webp)(?:\?[^\s<>"'\)]*)?)/gi;
-                const matches = msg.message.match(imgRegex);
-                let cleanText = msg.message.replace(imgRegex, '').trim();
+                // Extract image URLs (including [image:URL] syntax from Admin Dashboard and direct URLs)
+                const imgRegex = /\[image:(https?:\/\/[^\]]+)\]|(https?:\/\/[^\s<>"'\)]+?\.(?:png|jpe?g|gif|webp)(?:\?[^\s<>"'\)]*)?)/gi;
+                const matches = [];
+                let match;
+                while ((match = imgRegex.exec(msg.message)) !== null) {
+                    const url = match[1] || match[2];
+                    if (url && !matches.includes(url)) {
+                        matches.push(url);
+                    }
+                }
+
+                // Extract voice audio attachment if present ([voice:URL])
+                const voiceRegex = /\[voice:(https?:\/\/[^\]]+)\]/gi;
+                const voiceMatch = voiceRegex.exec(msg.message);
+
+                let cleanText = (msg.message || '')
+                    .replace(/\[image:https?:\/\/[^\]]+\]/gi, '')
+                    .replace(/\[voice:https?:\/\/[^\]]+\]/gi, '')
+                    .replace(/(https?:\/\/[^\s<>"'\)]+?\.(?:png|jpe?g|gif|webp)(?:\?[^\s<>"'\)]*)?)/gi, '')
+                    .trim();
 
                 const sendPayload = {
                     allowedMentions: { parse: [] }
                 };
 
-                if (matches && matches.length > 0) {
-                    sendPayload.files = matches; // Discord.js attaches the actual image natively!
-                    if (cleanText) {
-                        sendPayload.content = `💬 **${msg.sender_name}:** ${cleanText}`;
-                    } else {
-                        sendPayload.content = `💬 **${msg.sender_name}:**`;
-                    }
-                } else {
-                    sendPayload.content = `💬 **${msg.sender_name}:** ${msg.message}`;
+                const files = [...matches];
+                if (voiceMatch && voiceMatch[1]) {
+                    files.push(voiceMatch[1]);
+                }
+                if (files.length > 0) {
+                    sendPayload.files = files; // Discord.js attaches the actual media files natively!
                 }
 
-                await targetChannel.send(sendPayload).catch(() => {});
+                // Clean icon and sender formatting (just the name as requested)
+                const icon = msg.sender === 'staff' ? '🛡️' : '💬';
+
+                if (cleanText) {
+                    sendPayload.content = `${icon} **${msg.sender_name}:** ${cleanText}`;
+                } else if (voiceMatch && voiceMatch[1]) {
+                    sendPayload.content = `${icon} **${msg.sender_name}** *(Voice Message)*:`;
+                } else if (files.length > 0) {
+                    sendPayload.content = `${icon} **${msg.sender_name}:**`;
+                } else {
+                    sendPayload.content = `${icon} **${msg.sender_name}:** ${msg.message}`;
+                }
+
+                await targetChannel.send(sendPayload).catch((sendErr) => {
+                    console.error('[Error sending message to Discord channel]:', sendErr.message);
+                });
 
             } catch (err) {
-                console.error('[Error forwarding player message to Discord]:', err);
+                console.error('[Error forwarding message to Discord]:', err);
             }
         })
         .subscribe((status) => {
@@ -799,15 +848,31 @@ client.on('messageCreate', async (message) => {
 
         if (!messageText) return;
 
-        // Insert staff message into Supabase -> streams to website player in real-time
-        const { error: insertError } = await supabase
+        // Track in-memory signature to prevent echoing back when Realtime triggers
+        const dedupKey = `${ticket.id}:${messageText.trim()}`;
+        discordOriginMessageKeys.add(dedupKey);
+        setTimeout(() => discordOriginMessageKeys.delete(dedupKey), 30000);
+
+        // Insert staff message into Supabase -> streams to website player and admin dashboard in real-time
+        const { data: insertedMsg, error: insertError } = await supabase
             .from('ticket_messages')
             .insert({
                 ticket_id: ticket.id,
                 sender: 'staff',
                 sender_name: staffName,
                 message: messageText
-            });
+            })
+            .select('id')
+            .maybeSingle();
+
+        if (insertedMsg && insertedMsg.id) {
+            discordOriginMessageIds.add(Number(insertedMsg.id));
+            discordOriginMessageIds.add(String(insertedMsg.id));
+            setTimeout(() => {
+                discordOriginMessageIds.delete(Number(insertedMsg.id));
+                discordOriginMessageIds.delete(String(insertedMsg.id));
+            }, 60000);
+        }
 
         if (insertError) {
             console.error('[Supabase insert staff message error]:', insertError);
