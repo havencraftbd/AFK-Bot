@@ -765,17 +765,17 @@ function setupSupabaseRealtime() {
                     sendPayload.files = files; // Discord.js attaches the actual media files natively!
                 }
 
-                // Clean icon and sender formatting (just the name as requested)
-                const icon = msg.sender === 'staff' ? '🛡️' : '💬';
+                // Clean sender formatting (no shield emoji for staff messages)
+                const prefix = msg.sender === 'staff' ? '' : '💬 ';
 
                 if (cleanText) {
-                    sendPayload.content = `${icon} **${msg.sender_name}:** ${cleanText}`;
+                    sendPayload.content = `${prefix}**${msg.sender_name}:** ${cleanText}`;
                 } else if (voiceMatch && voiceMatch[1]) {
-                    sendPayload.content = `${icon} **${msg.sender_name}** *(Voice Message)*:`;
+                    sendPayload.content = `${prefix}**${msg.sender_name}** *(Voice Message)*:`;
                 } else if (files.length > 0) {
-                    sendPayload.content = `${icon} **${msg.sender_name}:**`;
+                    sendPayload.content = `${prefix}**${msg.sender_name}:**`;
                 } else {
-                    sendPayload.content = `${icon} **${msg.sender_name}:** ${msg.message}`;
+                    sendPayload.content = `${prefix}**${msg.sender_name}:** ${msg.message}`;
                 }
 
                 await targetChannel.send(sendPayload).catch((sendErr) => {
