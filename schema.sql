@@ -34,22 +34,28 @@ ALTER TABLE public.ticket_messages REPLICA IDENTITY FULL;
 ALTER TABLE public.tickets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ticket_messages ENABLE ROW LEVEL SECURITY;
 
--- 5. Create Permissive Policies for Web Clients & Serverless
--- Allow public select/insert/update so website users and API can interact smoothly
+-- 5. Strict Row Level Security (RLS) Policies
+-- Protects player emails, usernames, and private messages from data scrapers.
+-- All database queries from web users flow securely through /api/contact using service_role.
+
+-- Drop all insecure permissive policies
 DROP POLICY IF EXISTS "Public read tickets" ON public.tickets;
-CREATE POLICY "Public read tickets" ON public.tickets FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public insert tickets" ON public.tickets;
-CREATE POLICY "Public insert tickets" ON public.tickets FOR INSERT TO anon, authenticated WITH CHECK (true);
-
 DROP POLICY IF EXISTS "Public update tickets" ON public.tickets;
-CREATE POLICY "Public update tickets" ON public.tickets FOR UPDATE TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public read ticket_messages" ON public.ticket_messages;
-CREATE POLICY "Public read ticket_messages" ON public.ticket_messages FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public insert ticket_messages" ON public.ticket_messages;
-CREATE POLICY "Public insert ticket_messages" ON public.ticket_messages FOR INSERT TO anon, authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow anon read staff messages" ON public.ticket_messages;
+
+-- A. Tickets Table:
+-- Absolutely NO public direct read, insert, update, or delete via REST API.
+-- Only the backend /api/contact (with service_role) and haven-bot can access.
+
+-- B. Ticket Messages Table:
+-- Web clients can ONLY select staff messages (for instant real-time live streaming of staff replies).
+-- Player messages and insertions are restricted and must flow through authenticated /api/contact.
+CREATE POLICY "Allow anon read staff messages" ON public.ticket_messages
+FOR SELECT TO anon, authenticated
+USING (sender = 'staff');
 
 -- 6. Add Tables to Supabase Realtime Publication
 DO $$
